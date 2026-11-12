@@ -8,8 +8,8 @@ from gateway.audit import recent
 from gateway.backends import MockBackend
 from gateway.pipeline import process
 
-SAMPLE = "Mera naam Rahul Sharma hai. PAN ABCDE1234F, mobile 98765 43210."
-RAW = ["Rahul Sharma", "ABCDE1234F", "98765 43210", "98765"]
+SAMPLE = "Mera naam Rahul Sharma hai. PAN BNZPM2501F, mobile 98765 43210."
+RAW = ["Rahul Sharma", "BNZPM2501F", "98765 43210", "98765"]
 
 
 def test_one_row_per_request_without_raw_values(tmp_path):
@@ -70,3 +70,9 @@ def test_api_validates_input(client):
 def test_api_docs_and_health(client):
     assert client.get("/docs").status_code == 200
     assert client.get("/health").json()["status"] == "ok"
+
+
+def test_api_summary_counts_flagged(client):
+    client.post("/process", json={"text": SAMPLE, "mock_mode": "fake"})
+    s = client.get("/audit/summary").json()
+    assert s["by_status"]["flagged"] >= 1 and s["placeholders_invented_by_llm"] >= 1

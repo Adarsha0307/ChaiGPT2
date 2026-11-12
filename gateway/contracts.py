@@ -110,6 +110,10 @@ class ProcessResult:
     gateway_ms: float  # detect + mask + reinsert, excludes the LLM call
     llm_ms: float
     blocked: bool = False  # True when the leakage guard stopped the request
+    # True when an ID failed validation (wrong format / check digit); nothing
+    # was sent and the user must re-enter the values listed in invalid_ids.
+    needs_correction: bool = False
+    invalid_ids: list[dict] = field(default_factory=list)  # {type, value, start, end, reason, message}
 
     def to_dict(self) -> dict:
         return asdict(self)

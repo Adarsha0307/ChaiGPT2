@@ -4,12 +4,12 @@ from gateway.contracts import ProcessResult
 from gateway.pipeline import process
 from gateway.prompt import build_prompt
 
-DOC = "Mera naam Rahul Sharma hai. PAN ABCDE1234F, Aadhaar 2345 6789 0123."
+DOC = "Mera naam Rahul Sharma hai. PAN BNZPM2501F, Aadhaar 4991 1866 5246."
 
 CONTRACT_FIELDS = {
     "request_id", "original_text", "sanitized_text", "outbound_payload",
     "llm_output", "final_text", "entities", "reinsertion", "leak_check",
-    "backend", "model", "gateway_ms", "llm_ms", "blocked",
+    "backend", "model", "gateway_ms", "llm_ms", "blocked", "needs_correction", "invalid_ids",
 }
 
 

@@ -12,7 +12,7 @@ Dataset: `datasets management\data\synthetic_documents.json`. 50 documents, 328 
 | Detection precision (all types) | 100.0% |
 | Detection F1 | 100.0% |
 | Reinsertion, exact round-trip (echo) | 50 / 50 docs |
-| Gateway overhead per document (p50 / p95) | 434 ms / 629 ms |
+| Gateway overhead per document (p50 / p95) | 424 ms / 626 ms |
 
 ## Detection by entity type
 
@@ -41,6 +41,6 @@ A detection counts if it has the right type and overlaps the labeled span. *Exac
 
 ## Latency
 
-Gateway time = detect + mask + leak guard + reinsert, excluding the LLM call. Mean 449 ms, median 434 ms, p95 629 ms, max 670 ms on a laptop CPU, after a one-time model load.
+Gateway time = detect + mask + leak guard + reinsert, excluding the LLM call. Mean 440 ms, median 424 ms, p95 626 ms, max 709 ms on a laptop CPU, after a one-time model load.
 
 All values in this report come from M3's synthetic dataset. None belong to real people.

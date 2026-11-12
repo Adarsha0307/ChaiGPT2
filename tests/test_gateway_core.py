@@ -162,9 +162,9 @@ def test_plain_words_are_not_placeholders():
 
 
 # ---- task 16: process() end to end with Mock ---------------------------------
-SAMPLE = ("Mera naam Rahul Sharma hai. PAN ABCDE1234F, Aadhaar 2345 6789 0123. "
+SAMPLE = ("Mera naam Rahul Sharma hai. PAN BNZPM2501F, Aadhaar 4991 1866 5246. "
           "Rahul Sharma ka mobile 98765 43210 hai.")
-RAW = ["Rahul Sharma", "ABCDE1234F", "2345 6789 0123", "98765 43210"]
+RAW = ["Rahul Sharma", "BNZPM2501F", "4991 1866 5246", "98765 43210"]
 
 
 def test_echo_round_trip_is_exact():
