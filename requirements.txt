@@ -1,8 +1,11 @@
 presidio-analyzer
+presidio-anonymizer
 spacy
 gliner
+protobuf  # GLiNER's mdeberta tokenizer fails to load without it
 fastapi
 uvicorn
+streamlit
 google-genai
 pytest
 httpx

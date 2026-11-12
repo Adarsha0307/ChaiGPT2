@@ -14,6 +14,26 @@ import time
 
 from .contracts import LLMResponse
 
+
+def _load_dotenv() -> None:
+    """Read KEY=VALUE lines from the project's .env (gitignored) into os.environ.
+
+    Real environment variables win over the file. Values are never printed.
+    """
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+    if not os.path.exists(path):
+        return
+    with open(path, encoding="utf-8-sig") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+_load_dotenv()
+
 DEFAULT_GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
 

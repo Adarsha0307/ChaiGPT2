@@ -20,7 +20,8 @@ def check(name, fn):
         results.append((name, False, f"{type(e).__name__}: {e}"[:200]))
 
 
-for mod in ["presidio_analyzer", "spacy", "fastapi", "uvicorn", "google.genai"]:
+for mod in ["presidio_analyzer", "presidio_anonymizer", "spacy", "fastapi", "uvicorn",
+            "streamlit", "google.genai", "google.protobuf"]:
     check(f"import {mod}", lambda m=mod: (importlib.import_module(m), "ok")[1])
 
 check("import gliner", lambda: (importlib.import_module("gliner"), "ok")[1])
