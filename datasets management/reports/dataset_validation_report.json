@@ -1,0 +1,76 @@
+{
+  "validated_at": "2026-11-12T14:37:54.560755+00:00",
+  "dataset_path": "D:\\datasets management\\data\\synthetic_documents.json",
+  "status": "PASSED",
+  "checks": {
+    "exact_document_count": true,
+    "all_categories_represented": true,
+    "all_entity_types_represented": true,
+    "all_offsets_and_spans_exact": true,
+    "all_tricky_scenarios_represented": true,
+    "all_identifiers_valid": true
+  },
+  "summary": {
+    "total_documents": 50,
+    "total_annotations": 328,
+    "exact_span_matches": 328,
+    "non_overlapping_documents": 50,
+    "category_counts": {
+      "Loan Application": 13,
+      "KYC Form": 13,
+      "Customer Support Ticket": 12,
+      "Insurance Claim": 12
+    },
+    "language_counts": {
+      "en": 36,
+      "hinglish": 14
+    },
+    "entity_type_counts": {
+      "PERSON": 95,
+      "ADDRESS": 51,
+      "AADHAAR": 52,
+      "PAN": 57,
+      "GSTIN": 22,
+      "VOTER_ID": 29,
+      "PASSPORT": 22
+    },
+    "scenario_counts": {
+      "english": 36,
+      "hinglish": 14,
+      "multiple_people": 28,
+      "repeated_names": 15,
+      "multiple_pii_entities": 44,
+      "similar_looking_names": 12,
+      "negative_no_pii": 6
+    },
+    "identifier_validation": {
+      "AADHAAR": {
+        "total": 52,
+        "valid": 52,
+        "invalid": 0
+      },
+      "GSTIN": {
+        "total": 22,
+        "valid": 22,
+        "invalid": 0
+      },
+      "PAN": {
+        "total": 57,
+        "valid": 57,
+        "invalid": 0
+      },
+      "VOTER_ID": {
+        "total": 29,
+        "valid": 29,
+        "invalid": 0
+      },
+      "PASSPORT": {
+        "total": 22,
+        "valid": 22,
+        "invalid": 0
+      }
+    }
+  },
+  "error_count": 0,
+  "errors": []
+}

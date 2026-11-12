@@ -1,0 +1,2644 @@
+{
+  "metadata": {
+    "dataset_name": "synthetic_indian_pii_dataset",
+    "version": "1.0.0",
+    "generated_at": "2026-11-12T13:40:45.775791+00:00",
+    "seed": 20261112,
+    "total_documents": 50,
+    "categories": [
+      "Loan Application",
+      "KYC Form",
+      "Customer Support Ticket",
+      "Insurance Claim"
+    ],
+    "entity_types": [
+      "PERSON",
+      "ADDRESS",
+      "AADHAAR",
+      "PAN",
+      "GSTIN",
+      "VOTER_ID",
+      "PASSPORT"
+    ],
+    "synthetic_only": true
+  },
+  "documents": [
+    {
+      "id": "DOC-001",
+      "category": "KYC Form",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities"
+      ],
+      "text": "Merchant Onboarding KYC Dossier (Suraksha MicroCredit Corp.)\nOnboarding Ticket: ONB-7201\n\nBeneficial Owner: Diya Krishnan\nCommunication Address: House No. 401, Neelgiri Bhavan, Lakefront Avenue, Saket, New Delhi, Delhi - 110017\nIndividual PAN: QJCPK9652W\nAadhaar Ref: 5652 7833 7667\nPassport OVD: H2580196\nEPIC / Voter ID: TND7925936\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Diya Krishnan",
+          "start": 108,
+          "end": 121
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "House No. 401, Neelgiri Bhavan, Lakefront Avenue, Saket, New Delhi, Delhi - 110017",
+          "start": 145,
+          "end": 227
+        },
+        {
+          "entity_type": "PAN",
+          "value": "QJCPK9652W",
+          "start": 244,
+          "end": 254
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "5652 7833 7667",
+          "start": 268,
+          "end": 282
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "H2580196",
+          "start": 297,
+          "end": 305
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "TND7925936",
+          "start": 323,
+          "end": 333
+        }
+      ]
+    },
+    {
+      "id": "DOC-002",
+      "category": "Loan Application",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people",
+        "similar_looking_names"
+      ],
+      "text": "WORKING CAPITAL LOAN APPLICATION (IndusTrust Housing Finance)\nSubmission Date: 10-11-2026 | Branch Code: BR-202\n\n1. Borrower Name: Karan Malhotra\n2. Registered Office / Residence: Plot 61, Lotus Residency, Banyan Grove Street, Satellite, Ahmedabad, Gujarat 380015\n3. Tax ID (PAN): HWUPM3115U\n4. UIDAI Aadhaar: 4613-8159-6435\n5. Firm: Narmada Textile Traders | GSTIN: 07RRHCN8739O8ZY\nAuthorized Co-Signatory: Karan Mehrotra | Address: Flat B-388, Deccan Court, Station Cross Lane, Edappally, Kochi, Kerala - 682024\nLoan Amount Requested: Rs. 22,00,000 (36 months).\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Karan Malhotra",
+          "start": 131,
+          "end": 145
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 61, Lotus Residency, Banyan Grove Street, Satellite, Ahmedabad, Gujarat 380015",
+          "start": 180,
+          "end": 263
+        },
+        {
+          "entity_type": "PAN",
+          "value": "HWUPM3115U",
+          "start": 281,
+          "end": 291
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "4613-8159-6435",
+          "start": 310,
+          "end": 324
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "07RRHCN8739O8ZY",
+          "start": 367,
+          "end": 382
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Karan Mehrotra",
+          "start": 408,
+          "end": 422
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Flat B-388, Deccan Court, Station Cross Lane, Edappally, Kochi, Kerala - 682024",
+          "start": 434,
+          "end": 513
+        }
+      ]
+    },
+    {
+      "id": "DOC-003",
+      "category": "Insurance Claim",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "negative_no_pii"
+      ],
+      "text": "NavaJeevan General Insurance - Cashless Claim Process Guidelines\nCircular ID: CLM-SOP-2026-11\n\nFor planned hospitalizations, pre-authorization requests must be submitted at least 48 hours prior to admission through the TPA desk. Emergency admissions require intimation within 24 hours. Itemized hospital bills, diagnostic reports, and pharmacy invoices should be uploaded as clear PDFs.",
+      "annotations": []
+    },
+    {
+      "id": "DOC-004",
+      "category": "KYC Form",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities"
+      ],
+      "text": "CKYC & RE-KYC VERIFICATION FORM - NavaBharat FinServe Ltd.\nCKYC Request ID: KYC-2026-4104\n\nCustomer Full Name: Sneha Kulkarni\nPermanent Address: House No. 490, Ashoka Heights, Lakefront Avenue, Satellite, Ahmedabad, Gujarat 380015\nPAN: LENPK1532P\nAadhaar: 4821-1820-3546\nVoter ID Card: TND4908472\nIndian Passport No.: T1281568\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Sneha Kulkarni",
+          "start": 111,
+          "end": 125
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "House No. 490, Ashoka Heights, Lakefront Avenue, Satellite, Ahmedabad, Gujarat 380015",
+          "start": 145,
+          "end": 230
+        },
+        {
+          "entity_type": "PAN",
+          "value": "LENPK1532P",
+          "start": 236,
+          "end": 246
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "4821-1820-3546",
+          "start": 256,
+          "end": 270
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "TND4908472",
+          "start": 286,
+          "end": 296
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "T1281568",
+          "start": 318,
+          "end": 326
+        }
+      ]
+    },
+    {
+      "id": "DOC-005",
+      "category": "Customer Support Ticket",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities"
+      ],
+      "text": "Ticket ID: TKT-2026-8405 | Service Desk: NavaBharat FinServe Ltd.\nSubject: Profile & Document Mismatch Correction for Pooja Nair\n\nHi Team,\nMy account dashboard shows a spelling mismatch on PAN EBSPN8822J and Aadhaar 3720-3474-5587. Please update my mailing address to Plot 361, Shanti Niketan, Parkside Extension, Vaishali Nagar, Jaipur, Rajasthan - 302021.\nI am attaching my Voter ID RJS3691059 as supporting ID.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Pooja Nair",
+          "start": 118,
+          "end": 128
+        },
+        {
+          "entity_type": "PAN",
+          "value": "EBSPN8822J",
+          "start": 193,
+          "end": 203
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "3720-3474-5587",
+          "start": 216,
+          "end": 230
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 361, Shanti Niketan, Parkside Extension, Vaishali Nagar, Jaipur, Rajasthan - 302021",
+          "start": 268,
+          "end": 356
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "RJS3691059",
+          "start": 385,
+          "end": 395
+        }
+      ]
+    },
+    {
+      "id": "DOC-006",
+      "category": "Customer Support Ticket",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "multiple_pii_entities"
+      ],
+      "text": "Support Ticket #TKT-HN-9106 (IndusTrust Housing Finance)\nHi Customer Care,\nMera naam Nandini Reddy hai. Mera statement aur debit card galat ghar par dispatch ho gaya hai.\nAsli delivery address yeh hai: Flat A-600, Vindhya Chambers, Lakefront Avenue, Vaishali Nagar, Jaipur, Rajasthan 302021.\nConfirmation ke liye PAN IFUPR1961K aur Aadhaar 9665-5495-8484 verify kar sakte hain.\nInternational card activate karne ke liye Passport M5831698 bhi diya tha.\nBackup ID mein Voter ID TLG2757387 uploaded hai.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Nandini Reddy",
+          "start": 85,
+          "end": 98
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Flat A-600, Vindhya Chambers, Lakefront Avenue, Vaishali Nagar, Jaipur, Rajasthan 302021",
+          "start": 202,
+          "end": 290
+        },
+        {
+          "entity_type": "PAN",
+          "value": "IFUPR1961K",
+          "start": 317,
+          "end": 327
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "9665-5495-8484",
+          "start": 340,
+          "end": 354
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "M5831698",
+          "start": 429,
+          "end": 437
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "TLG2757387",
+          "start": 476,
+          "end": 486
+        }
+      ]
+    },
+    {
+      "id": "DOC-007",
+      "category": "Insurance Claim",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people",
+        "repeated_names"
+      ],
+      "text": "Pragati Shield Assurance - Health & Motor Claim Settlement Form\nClaim Reference: CLM-2026-6307 | Claimed Amount: Rs. 7,10,000\n\nInsured / Policyholder Name: Arjun Patel\nInsured Residential Address: House No. 433, Parijat Arcade, Parkside Extension, Saket, New Delhi, Delhi - 110017\nPolicyholder PAN: AAUPP8239Z\nPolicyholder Aadhaar: 9028-2270-7523\nTravel / Overseas Policy Passport No.: C8888171\nCommercial Fleet Owner: Parijat Retail Ventures | GSTIN: 19UYLFP7119Z9ZP\nNominee / Secondary Claimant: Lakshmi Narayanan\nNominee Aadhaar: 502318205340\nNominee Address: Plot 707, Kaveri Apartments, Vidya Mandir Marg, Vaishali Nagar, Jaipur, Rajasthan 302021\n\nSettlement Note: NEFT reimbursement approved in favour of Arjun Patel. Discharge voucher signed by Arjun Patel.",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Arjun Patel",
+          "start": 156,
+          "end": 167
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "House No. 433, Parijat Arcade, Parkside Extension, Saket, New Delhi, Delhi - 110017",
+          "start": 197,
+          "end": 280
+        },
+        {
+          "entity_type": "PAN",
+          "value": "AAUPP8239Z",
+          "start": 299,
+          "end": 309
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "9028-2270-7523",
+          "start": 332,
+          "end": 346
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "C8888171",
+          "start": 386,
+          "end": 394
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "19UYLFP7119Z9ZP",
+          "start": 452,
+          "end": 467
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Lakshmi Narayanan",
+          "start": 498,
+          "end": 515
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "502318205340",
+          "start": 533,
+          "end": 545
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 707, Kaveri Apartments, Vidya Mandir Marg, Vaishali Nagar, Jaipur, Rajasthan 302021",
+          "start": 563,
+          "end": 651
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Arjun Patel",
+          "start": 711,
+          "end": 722
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Arjun Patel",
+          "start": 752,
+          "end": 763
+        }
+      ]
+    },
+    {
+      "id": "DOC-008",
+      "category": "Insurance Claim",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "repeated_names"
+      ],
+      "text": "ArogyaKavach Health & Life - Health & Motor Claim Settlement Form\nClaim Reference: CLM-2026-6308 | Claimed Amount: Rs. 2,45,000\n\nInsured / Policyholder Name: Tanvi Saxena\nInsured Residential Address: House No. 217, Deccan Court, Parkside Extension, Satellite, Ahmedabad, Gujarat - 380015\nPolicyholder PAN: BBMPS5273C\nPolicyholder Aadhaar: 537856364011\nClaimant Voter ID: WBG5362929\n\nSettlement Note: NEFT reimbursement approved in favour of Tanvi Saxena. Discharge voucher signed by Tanvi Saxena.",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Tanvi Saxena",
+          "start": 158,
+          "end": 170
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "House No. 217, Deccan Court, Parkside Extension, Satellite, Ahmedabad, Gujarat - 380015",
+          "start": 200,
+          "end": 287
+        },
+        {
+          "entity_type": "PAN",
+          "value": "BBMPS5273C",
+          "start": 306,
+          "end": 316
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "537856364011",
+          "start": 339,
+          "end": 351
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "WBG5362929",
+          "start": 371,
+          "end": 381
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Tanvi Saxena",
+          "start": 441,
+          "end": 453
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Tanvi Saxena",
+          "start": 483,
+          "end": 495
+        }
+      ]
+    },
+    {
+      "id": "DOC-009",
+      "category": "KYC Form",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "multiple_pii_entities",
+        "multiple_people"
+      ],
+      "text": "ArthSetu Capital Services - Video KYC Update Request (KYC-HN-609)\nHello Support,\nMera naam Aditya Kulkarni hai aur mujhe apna annual re-KYC complete karwana hai. Naya address House No. 100, Parijat Arcade, MG Link Road, Indiranagar, Bengaluru, Karnataka 560038 update kar dijiye.\nMaine Aadhaar 269356422105 aur PAN card PISPK4526A verify kar liya hai.\nNRI verification ke liye Passport number E4605797 bhi note kar lein.\nCurrent account Narmada Textile Traders ka GSTIN 19AHUFN3055G1ZH link karna hai.\nJoint holder Bhavana Shetty ka Aadhaar 9776-2264-6019 bhi pending hai.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Aditya Kulkarni",
+          "start": 91,
+          "end": 106
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "House No. 100, Parijat Arcade, MG Link Road, Indiranagar, Bengaluru, Karnataka 560038",
+          "start": 175,
+          "end": 260
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "269356422105",
+          "start": 294,
+          "end": 306
+        },
+        {
+          "entity_type": "PAN",
+          "value": "PISPK4526A",
+          "start": 320,
+          "end": 330
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "E4605797",
+          "start": 393,
+          "end": 401
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "19AHUFN3055G1ZH",
+          "start": 470,
+          "end": 485
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Bhavana Shetty",
+          "start": 515,
+          "end": 529
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "9776-2264-6019",
+          "start": 541,
+          "end": 555
+        }
+      ]
+    },
+    {
+      "id": "DOC-010",
+      "category": "Customer Support Ticket",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities"
+      ],
+      "text": "Ticket ID: TKT-2026-8410 | Service Desk: Suraksha MicroCredit Corp.\nSubject: Profile & Document Mismatch Correction for Shruti Agarwal\n\nHi Team,\nMy account dashboard shows a spelling mismatch on PAN ZKHPA9026D and Aadhaar 5651 2790 6037. Please update my mailing address to Plot 85, Shanti Niketan, Vidya Mandir Marg, Banjara Hills, Hyderabad, Telangana 500034.\nI am attaching my Voter ID DLH7642512 as supporting ID.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Shruti Agarwal",
+          "start": 120,
+          "end": 134
+        },
+        {
+          "entity_type": "PAN",
+          "value": "ZKHPA9026D",
+          "start": 199,
+          "end": 209
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "5651 2790 6037",
+          "start": 222,
+          "end": 236
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 85, Shanti Niketan, Vidya Mandir Marg, Banjara Hills, Hyderabad, Telangana 500034",
+          "start": 274,
+          "end": 360
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "DLH7642512",
+          "start": 389,
+          "end": 399
+        }
+      ]
+    },
+    {
+      "id": "DOC-011",
+      "category": "KYC Form",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people",
+        "repeated_names"
+      ],
+      "text": "Merchant Onboarding KYC Dossier (NavaBharat FinServe Ltd.)\nOnboarding Ticket: ONB-7211\n\nBeneficial Owner: Manish Tiwari\nCommunication Address: Flat 620, Surya Enclave, Vidya Mandir Marg, Banjara Hills, Hyderabad, Telangana 500034\nIndividual PAN: AKLPT9919I\nAadhaar Ref: 2375 0730 4405\nMerchant Legal Name: Deccan Agro Logistics LLP\nRegistered GSTIN: 07MFZCD2400R7Z9\nPassport OVD: N5788511\nSecond Signatory: Rekha Choudhary (PAN: AKRPC8471P)\nCompliance Sign-off: PEP screening cleared for Manish Tiwari.",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Manish Tiwari",
+          "start": 106,
+          "end": 119
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Flat 620, Surya Enclave, Vidya Mandir Marg, Banjara Hills, Hyderabad, Telangana 500034",
+          "start": 143,
+          "end": 229
+        },
+        {
+          "entity_type": "PAN",
+          "value": "AKLPT9919I",
+          "start": 246,
+          "end": 256
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "2375 0730 4405",
+          "start": 270,
+          "end": 284
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "07MFZCD2400R7Z9",
+          "start": 350,
+          "end": 365
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "N5788511",
+          "start": 380,
+          "end": 388
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Rekha Choudhary",
+          "start": 407,
+          "end": 422
+        },
+        {
+          "entity_type": "PAN",
+          "value": "AKRPC8471P",
+          "start": 429,
+          "end": 439
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Manish Tiwari",
+          "start": 488,
+          "end": 501
+        }
+      ]
+    },
+    {
+      "id": "DOC-012",
+      "category": "Insurance Claim",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people"
+      ],
+      "text": "ArogyaKavach Health & Life - Health & Motor Claim Settlement Form\nClaim Reference: CLM-2026-6312 | Claimed Amount: Rs. 4,80,000\n\nInsured / Policyholder Name: Karan Malhotra\nInsured Residential Address: Plot 188, Parijat Arcade, Vidya Mandir Marg, Vaishali Nagar, Jaipur, Rajasthan 302021\nPolicyholder PAN: OGQPM9691X\nPolicyholder Aadhaar: 769679176334\nTravel / Overseas Policy Passport No.: B5045396\nClaimant Voter ID: KRN4609917\nCommercial Fleet Owner: Parijat Retail Ventures | GSTIN: 33ESAPP2691WCZH\nNominee / Secondary Claimant: Nisha Venkatesh\nNominee Aadhaar: 799335919537\nNominee Address: Plot 359, Gulmohar Greens, MG Link Road, Edappally, Kochi, Kerala 682024\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Karan Malhotra",
+          "start": 158,
+          "end": 172
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 188, Parijat Arcade, Vidya Mandir Marg, Vaishali Nagar, Jaipur, Rajasthan 302021",
+          "start": 202,
+          "end": 287
+        },
+        {
+          "entity_type": "PAN",
+          "value": "OGQPM9691X",
+          "start": 306,
+          "end": 316
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "769679176334",
+          "start": 339,
+          "end": 351
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "B5045396",
+          "start": 391,
+          "end": 399
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "KRN4609917",
+          "start": 419,
+          "end": 429
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "33ESAPP2691WCZH",
+          "start": 487,
+          "end": 502
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Nisha Venkatesh",
+          "start": 533,
+          "end": 548
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "799335919537",
+          "start": 566,
+          "end": 578
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 359, Gulmohar Greens, MG Link Road, Edappally, Kochi, Kerala 682024",
+          "start": 596,
+          "end": 668
+        }
+      ]
+    },
+    {
+      "id": "DOC-013",
+      "category": "Insurance Claim",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "multiple_pii_entities",
+        "multiple_people",
+        "repeated_names"
+      ],
+      "text": "NavaJeevan General Insurance - Claim Desk Escalation (CLM-HN-2213)\nNamaste Claim Team,\nMain Manish Tiwari bol raha hoon. Mera Rs. 1,90,000 ka hospitalization claim abhi tak pending hai.\nDischarge summary ke saath maine address Unit 59, Gulmohar Greens, MG Link Road, Shivaji Nagar, Nagpur, Maharashtra - 440010, PAN ZVJPT9473K aur Aadhaar 910284480809 bhej diya hai.\nGroup corporate policy Parijat Retail Ventures (GSTIN: 19LOOCP4400T1ZJ) ke under hai.\nHospital desk par nominee Pallavi Kulkarni ne saare forms sign kiye the.\nKripya Manish Tiwari ka claim jaldi process karein.",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Manish Tiwari",
+          "start": 92,
+          "end": 105
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Unit 59, Gulmohar Greens, MG Link Road, Shivaji Nagar, Nagpur, Maharashtra - 440010",
+          "start": 227,
+          "end": 310
+        },
+        {
+          "entity_type": "PAN",
+          "value": "ZVJPT9473K",
+          "start": 316,
+          "end": 326
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "910284480809",
+          "start": 339,
+          "end": 351
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "19LOOCP4400T1ZJ",
+          "start": 422,
+          "end": 437
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Pallavi Kulkarni",
+          "start": 479,
+          "end": 495
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Manish Tiwari",
+          "start": 533,
+          "end": 546
+        }
+      ]
+    },
+    {
+      "id": "DOC-014",
+      "category": "KYC Form",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people"
+      ],
+      "text": "CKYC & RE-KYC VERIFICATION FORM - IndusTrust Housing Finance\nCKYC Request ID: KYC-2026-4114\n\nCustomer Full Name: Rohan Verma\nPermanent Address: Plot 500, Lotus Residency, Lakefront Avenue, Kothrud, Pune, Maharashtra - 411038\nPAN: CXHPV2743U\nAadhaar: 3113 0133 5111\nLinked Entity: Narmada Textile Traders | GSTIN: 09EZFPN9536R4Z3\n\nJoint Account Holder / Nominee: Sonal Kulkarni\nJoint Holder Voter ID: GJR4550830\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Rohan Verma",
+          "start": 113,
+          "end": 124
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 500, Lotus Residency, Lakefront Avenue, Kothrud, Pune, Maharashtra - 411038",
+          "start": 144,
+          "end": 224
+        },
+        {
+          "entity_type": "PAN",
+          "value": "CXHPV2743U",
+          "start": 230,
+          "end": 240
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "3113 0133 5111",
+          "start": 250,
+          "end": 264
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "09EZFPN9536R4Z3",
+          "start": 313,
+          "end": 328
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Sonal Kulkarni",
+          "start": 362,
+          "end": 376
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "GJR4550830",
+          "start": 400,
+          "end": 410
+        }
+      ]
+    },
+    {
+      "id": "DOC-015",
+      "category": "Customer Support Ticket",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "negative_no_pii"
+      ],
+      "text": "Support Ticket #TKT-HN-99021\nHi Team,\nMobile app update hone ke baad OTP screen par timer freeze ho raha hai aur login nahi ho paa raha. Network strong hai phir bhi error code E-408 aa raha hai. Kripya app team ko inform karein taaki next patch mein yeh bug fix ho sake.",
+      "annotations": []
+    },
+    {
+      "id": "DOC-016",
+      "category": "Loan Application",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people",
+        "repeated_names",
+        "similar_looking_names"
+      ],
+      "text": "Subject: Home Improvement Loan Request - Applicant Vikram Singh\nLender: NavaBharat FinServe Ltd. | File ID: HLF-3116\n\nDear Credit Underwriting Team,\nPlease review the loan dossier for Vikram Singh, residing at Plot 105, Narmada Towers, Parkside Extension, Indiranagar, Bengaluru, Karnataka - 560038. The applicant has enclosed PAN WCXPS7741C and Aadhaar 644043660606 for e-KYC.\nSelf-employed income proof comes from Narmada Textile Traders (GSTIN: 09OSMFN5925N2Z2).\nJoint borrower Vikram Sinha (Aadhaar: 454887789315, PAN: FTMPS6168Q) has co-signed the mandate.\nKindly release the sanction letter to Vikram Singh for Rs. 8,50,000.",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Vikram Singh",
+          "start": 51,
+          "end": 63
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Vikram Singh",
+          "start": 184,
+          "end": 196
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 105, Narmada Towers, Parkside Extension, Indiranagar, Bengaluru, Karnataka - 560038",
+          "start": 210,
+          "end": 298
+        },
+        {
+          "entity_type": "PAN",
+          "value": "WCXPS7741C",
+          "start": 331,
+          "end": 341
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "644043660606",
+          "start": 354,
+          "end": 366
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "09OSMFN5925N2Z2",
+          "start": 448,
+          "end": 463
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Vikram Sinha",
+          "start": 481,
+          "end": 493
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "454887789315",
+          "start": 504,
+          "end": 516
+        },
+        {
+          "entity_type": "PAN",
+          "value": "FTMPS6168Q",
+          "start": 523,
+          "end": 533
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Vikram Singh",
+          "start": 600,
+          "end": 612
+        }
+      ]
+    },
+    {
+      "id": "DOC-017",
+      "category": "Customer Support Ticket",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "multiple_pii_entities",
+        "multiple_people",
+        "repeated_names"
+      ],
+      "text": "Support Ticket #TKT-HN-9117 (NavaBharat FinServe Ltd.)\nHi Customer Care,\nMera naam Aarav Sharma hai. Mera statement aur debit card galat ghar par dispatch ho gaya hai.\nAsli delivery address yeh hai: Flat C-791, Gulmohar Greens, Heritage Market Road, Saket, New Delhi, Delhi 110017.\nConfirmation ke liye PAN ZGMPS7437Q aur Aadhaar 7504 5037 4855 verify kar sakte hain.\nBackup ID mein Voter ID UPR5047623 uploaded hai.\nTax invoice par Vindhya MedTech Supplies ka GSTIN 19YSWFV8293H3ZA print hona chahiye.\nShayad aapne galti se Sonal Kulkarni ka record merge kar diya hai.\nPlease Aarav Sharma ke ticket ko priority par resolve karein.",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Aarav Sharma",
+          "start": 83,
+          "end": 95
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Flat C-791, Gulmohar Greens, Heritage Market Road, Saket, New Delhi, Delhi 110017",
+          "start": 199,
+          "end": 280
+        },
+        {
+          "entity_type": "PAN",
+          "value": "ZGMPS7437Q",
+          "start": 307,
+          "end": 317
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "7504 5037 4855",
+          "start": 330,
+          "end": 344
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "UPR5047623",
+          "start": 392,
+          "end": 402
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "19YSWFV8293H3ZA",
+          "start": 467,
+          "end": 482
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Sonal Kulkarni",
+          "start": 525,
+          "end": 539
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Aarav Sharma",
+          "start": 577,
+          "end": 589
+        }
+      ]
+    },
+    {
+      "id": "DOC-018",
+      "category": "Loan Application",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people",
+        "repeated_names",
+        "similar_looking_names"
+      ],
+      "text": "Suraksha MicroCredit Corp. - Personal & MSME Loan Application\nApplication Ref: LN-2026-1058\n\nPrimary Applicant: Rohan Verma\nResidential Address: Plot 227, Surya Enclave, Parkside Extension, Shivaji Nagar, Nagpur, Maharashtra 440010\nPAN Card Number: KTLPV5135C\nAadhaar Number: 9746 0892 7590\nVoter ID (EPIC): TND7728376\nPassport Number: K9062833\nEnterprise Name: Surya Solar Systems\nBusiness GSTIN: 09ZPWPS7744E6Z7\n\nCo-Applicant / Guarantor Details:\nCo-Applicant Name: Rohan Varma\nCo-Applicant PAN: VBYPV3315V\nCo-Applicant Address: Flat C-520, Lotus Residency, Lakefront Avenue, Shivaji Nagar, Nagpur, Maharashtra - 440010\n\nRequested Facility: Rs. 22,00,000 for 60 months.\nDeclaration: I, Rohan Verma, confirm that the particulars submitted above are accurate and consent to KYC verification.\nSigned by: Rohan Verma",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Rohan Verma",
+          "start": 112,
+          "end": 123
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 227, Surya Enclave, Parkside Extension, Shivaji Nagar, Nagpur, Maharashtra 440010",
+          "start": 145,
+          "end": 231
+        },
+        {
+          "entity_type": "PAN",
+          "value": "KTLPV5135C",
+          "start": 249,
+          "end": 259
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "9746 0892 7590",
+          "start": 276,
+          "end": 290
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "TND7728376",
+          "start": 308,
+          "end": 318
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "K9062833",
+          "start": 336,
+          "end": 344
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "09ZPWPS7744E6Z7",
+          "start": 398,
+          "end": 413
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Rohan Varma",
+          "start": 468,
+          "end": 479
+        },
+        {
+          "entity_type": "PAN",
+          "value": "VBYPV3315V",
+          "start": 498,
+          "end": 508
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Flat C-520, Lotus Residency, Lakefront Avenue, Shivaji Nagar, Nagpur, Maharashtra - 440010",
+          "start": 531,
+          "end": 621
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Rohan Verma",
+          "start": 688,
+          "end": 699
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Rohan Verma",
+          "start": 803,
+          "end": 814
+        }
+      ]
+    },
+    {
+      "id": "DOC-019",
+      "category": "KYC Form",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "multiple_pii_entities",
+        "multiple_people"
+      ],
+      "text": "IndusTrust Housing Finance - Video KYC Update Request (KYC-HN-619)\nHello Support,\nMera naam Harshvardhan Rao hai aur mujhe apna annual re-KYC complete karwana hai. Naya address House No. 220, Chinar Plaza, Vidya Mandir Marg, Saket, New Delhi, Delhi 110017 update kar dijiye.\nMaine Aadhaar 8386-7154-9560 aur PAN card PGTPR6009O verify kar liya hai.\nPurane proof mein Voter ID KRN1372123 diya tha.\nNRI verification ke liye Passport number R7145722 bhi note kar lein.\nCurrent account Chinar Packaging Solutions ka GSTIN 27DNYPC5064R1ZY link karna hai.\nJoint holder Lakshmi Narayanan ka Aadhaar 2285 8798 1814 bhi pending hai.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Harshvardhan Rao",
+          "start": 92,
+          "end": 108
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "House No. 220, Chinar Plaza, Vidya Mandir Marg, Saket, New Delhi, Delhi 110017",
+          "start": 177,
+          "end": 255
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "8386-7154-9560",
+          "start": 289,
+          "end": 303
+        },
+        {
+          "entity_type": "PAN",
+          "value": "PGTPR6009O",
+          "start": 317,
+          "end": 327
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "KRN1372123",
+          "start": 376,
+          "end": 386
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "R7145722",
+          "start": 438,
+          "end": 446
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "27DNYPC5064R1ZY",
+          "start": 518,
+          "end": 533
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Lakshmi Narayanan",
+          "start": 563,
+          "end": 580
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "2285 8798 1814",
+          "start": 592,
+          "end": 606
+        }
+      ]
+    },
+    {
+      "id": "DOC-020",
+      "category": "KYC Form",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities"
+      ],
+      "text": "CKYC & RE-KYC VERIFICATION FORM - NavaBharat FinServe Ltd.\nCKYC Request ID: KYC-2026-4120\n\nCustomer Full Name: Swati Mishra\nPermanent Address: Flat 463, Deccan Court, Lakefront Avenue, Vaishali Nagar, Jaipur, Rajasthan - 302021\nPAN: MIVPM7759F\nAadhaar: 350442833439\nVoter ID Card: RJS1289251\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Swati Mishra",
+          "start": 111,
+          "end": 123
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Flat 463, Deccan Court, Lakefront Avenue, Vaishali Nagar, Jaipur, Rajasthan - 302021",
+          "start": 143,
+          "end": 227
+        },
+        {
+          "entity_type": "PAN",
+          "value": "MIVPM7759F",
+          "start": 233,
+          "end": 243
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "350442833439",
+          "start": 253,
+          "end": 265
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "RJS1289251",
+          "start": 281,
+          "end": 291
+        }
+      ]
+    },
+    {
+      "id": "DOC-021",
+      "category": "Loan Application",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "negative_no_pii"
+      ],
+      "text": "NavaBharat FinServe Ltd. - Loan Eligibility & Rate Schedule\nReference Code: SCH-HL-2026-04\n\nDear Credit Desk,\nPlease share the updated interest rate slab and processing fee waiver table for salaried housing loan applications between Rs. 15,00,000 and Rs. 35,00,000 for a 120-month tenure. No borrower KYC packet is attached to this pre-sanction inquiry. All standard verification guidelines under internal circular CIRC-2026-19 apply.",
+      "annotations": []
+    },
+    {
+      "id": "DOC-022",
+      "category": "KYC Form",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people",
+        "similar_looking_names"
+      ],
+      "text": "CKYC & RE-KYC VERIFICATION FORM - ArthSetu Capital Services\nCKYC Request ID: KYC-2026-4122\n\nCustomer Full Name: Neha Sharma\nPermanent Address: Unit 216, Neelgiri Bhavan, Station Cross Lane, Vaishali Nagar, Jaipur, Rajasthan 302021\nPAN: BCUPS5860A\nAadhaar: 2883-0767-6710\nVoter ID Card: TND4503745\n\nJoint Account Holder / Nominee: Neha Varma\nJoint Holder Voter ID: KRL4208633\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Neha Sharma",
+          "start": 112,
+          "end": 123
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Unit 216, Neelgiri Bhavan, Station Cross Lane, Vaishali Nagar, Jaipur, Rajasthan 302021",
+          "start": 143,
+          "end": 230
+        },
+        {
+          "entity_type": "PAN",
+          "value": "BCUPS5860A",
+          "start": 236,
+          "end": 246
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "2883-0767-6710",
+          "start": 256,
+          "end": 270
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "TND4503745",
+          "start": 286,
+          "end": 296
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Neha Varma",
+          "start": 330,
+          "end": 340
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "KRL4208633",
+          "start": 364,
+          "end": 374
+        }
+      ]
+    },
+    {
+      "id": "DOC-023",
+      "category": "Loan Application",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people",
+        "similar_looking_names"
+      ],
+      "text": "WORKING CAPITAL LOAN APPLICATION (IndusTrust Housing Finance)\nSubmission Date: 10-11-2026 | Branch Code: BR-223\n\n1. Borrower Name: Arjun Patel\n2. Registered Office / Residence: Plot 480, Vindhya Chambers, Vidya Mandir Marg, Shivaji Nagar, Nagpur, Maharashtra - 440010\n3. Tax ID (PAN): VRWPP1217W\n4. UIDAI Aadhaar: 4527-0181-0393\n5. Firm: Kaveri Precision Components Pvt. Ltd. | GSTIN: 33YVGPK3260A6ZE\n7. Passport Ref: K9463312\nAuthorized Co-Signatory: Arjun Patil | Address: Plot 514, Kaveri Apartments, Temple View Marg, Salt Lake Sector V, Kolkata, West Bengal 700091\nLoan Amount Requested: Rs. 14,25,000 (84 months).\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Arjun Patel",
+          "start": 131,
+          "end": 142
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 480, Vindhya Chambers, Vidya Mandir Marg, Shivaji Nagar, Nagpur, Maharashtra - 440010",
+          "start": 177,
+          "end": 267
+        },
+        {
+          "entity_type": "PAN",
+          "value": "VRWPP1217W",
+          "start": 285,
+          "end": 295
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "4527-0181-0393",
+          "start": 314,
+          "end": 328
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "33YVGPK3260A6ZE",
+          "start": 385,
+          "end": 400
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "K9463312",
+          "start": 418,
+          "end": 426
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Arjun Patil",
+          "start": 452,
+          "end": 463
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 514, Kaveri Apartments, Temple View Marg, Salt Lake Sector V, Kolkata, West Bengal 700091",
+          "start": 475,
+          "end": 569
+        }
+      ]
+    },
+    {
+      "id": "DOC-024",
+      "category": "Customer Support Ticket",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "negative_no_pii"
+      ],
+      "text": "Ticket ID: TKT-2026-99014 | Portal Downtime Report\nSubject: Unable to download monthly statement PDF after 18:00 IST\n\nHi Technical Support,\nWhenever I click the 'Download Statement' button under the Accounts tab, the portal returns HTTP 504 Gateway Timeout for statement cycle October 2026. Cache clearing did not resolve the issue. Please investigate the backend export queue.",
+      "annotations": []
+    },
+    {
+      "id": "DOC-025",
+      "category": "KYC Form",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "repeated_names"
+      ],
+      "text": "Merchant Onboarding KYC Dossier (IndusTrust Housing Finance)\nOnboarding Ticket: ONB-7225\n\nBeneficial Owner: Meera Iyer\nCommunication Address: Unit 893, Shanti Niketan, Banyan Grove Street, Andheri West, Mumbai, Maharashtra 400053\nIndividual PAN: LAFPI6689G\nAadhaar Ref: 3983 6230 3550\nEPIC / Voter ID: KRN3243713\nCompliance Sign-off: PEP screening cleared for Meera Iyer.",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Meera Iyer",
+          "start": 108,
+          "end": 118
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Unit 893, Shanti Niketan, Banyan Grove Street, Andheri West, Mumbai, Maharashtra 400053",
+          "start": 142,
+          "end": 229
+        },
+        {
+          "entity_type": "PAN",
+          "value": "LAFPI6689G",
+          "start": 246,
+          "end": 256
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "3983 6230 3550",
+          "start": 270,
+          "end": 284
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "KRN3243713",
+          "start": 302,
+          "end": 312
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Meera Iyer",
+          "start": 360,
+          "end": 370
+        }
+      ]
+    },
+    {
+      "id": "DOC-026",
+      "category": "Insurance Claim",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities"
+      ],
+      "text": "Pragati Shield Assurance - Health & Motor Claim Settlement Form\nClaim Reference: CLM-2026-6326 | Claimed Amount: Rs. 2,45,000\n\nInsured / Policyholder Name: Neha Sharma\nInsured Residential Address: Plot 465, Ashoka Heights, Parkside Extension, Andheri West, Mumbai, Maharashtra - 400053\nPolicyholder PAN: ELJPS6305O\nPolicyholder Aadhaar: 837892621868\nTravel / Overseas Policy Passport No.: D1611704\nClaimant Voter ID: KRN6027189\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Neha Sharma",
+          "start": 156,
+          "end": 167
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 465, Ashoka Heights, Parkside Extension, Andheri West, Mumbai, Maharashtra - 400053",
+          "start": 197,
+          "end": 285
+        },
+        {
+          "entity_type": "PAN",
+          "value": "ELJPS6305O",
+          "start": 304,
+          "end": 314
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "837892621868",
+          "start": 337,
+          "end": 349
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "D1611704",
+          "start": 389,
+          "end": 397
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "KRN6027189",
+          "start": 417,
+          "end": 427
+        }
+      ]
+    },
+    {
+      "id": "DOC-027",
+      "category": "Insurance Claim",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people"
+      ],
+      "text": "ArogyaKavach Health & Life - Health & Motor Claim Settlement Form\nClaim Reference: CLM-2026-6327 | Claimed Amount: Rs. 7,10,000\n\nInsured / Policyholder Name: Abhishek Pandey\nInsured Residential Address: Flat C-488, Deccan Court, Heritage Market Road, Indiranagar, Bengaluru, Karnataka - 560038\nPolicyholder PAN: GKCPP4439V\nPolicyholder Aadhaar: 2383-5050-7874\nTravel / Overseas Policy Passport No.: U6290692\nCommercial Fleet Owner: Parijat Retail Ventures | GSTIN: 36BNMFP5456V5Z5\nNominee / Secondary Claimant: Aparna Sen\nNominee Aadhaar: 951605894440\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Abhishek Pandey",
+          "start": 158,
+          "end": 173
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Flat C-488, Deccan Court, Heritage Market Road, Indiranagar, Bengaluru, Karnataka - 560038",
+          "start": 203,
+          "end": 293
+        },
+        {
+          "entity_type": "PAN",
+          "value": "GKCPP4439V",
+          "start": 312,
+          "end": 322
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "2383-5050-7874",
+          "start": 345,
+          "end": 359
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "U6290692",
+          "start": 399,
+          "end": 407
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "36BNMFP5456V5Z5",
+          "start": 465,
+          "end": 480
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Aparna Sen",
+          "start": 511,
+          "end": 521
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "951605894440",
+          "start": 539,
+          "end": 551
+        }
+      ]
+    },
+    {
+      "id": "DOC-028",
+      "category": "Insurance Claim",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people"
+      ],
+      "text": "Pragati Shield Assurance - Health & Motor Claim Settlement Form\nClaim Reference: CLM-2026-6328 | Claimed Amount: Rs. 1,65,500\n\nInsured / Policyholder Name: Suresh Menon\nInsured Residential Address: Plot 895, Neelgiri Bhavan, Parkside Extension, Gomti Nagar, Lucknow, Uttar Pradesh - 226010\nPolicyholder PAN: WWRPM4012P\nPolicyholder Aadhaar: 901034984218\nCommercial Fleet Owner: Surya Solar Systems | GSTIN: 24BZJCS8415LAZA\nNominee / Secondary Claimant: Bhavana Shetty\nNominee Aadhaar: 6607-6863-6804\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Suresh Menon",
+          "start": 156,
+          "end": 168
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 895, Neelgiri Bhavan, Parkside Extension, Gomti Nagar, Lucknow, Uttar Pradesh - 226010",
+          "start": 198,
+          "end": 289
+        },
+        {
+          "entity_type": "PAN",
+          "value": "WWRPM4012P",
+          "start": 308,
+          "end": 318
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "901034984218",
+          "start": 341,
+          "end": 353
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "24BZJCS8415LAZA",
+          "start": 407,
+          "end": 422
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Bhavana Shetty",
+          "start": 453,
+          "end": 467
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "6607-6863-6804",
+          "start": 485,
+          "end": 499
+        }
+      ]
+    },
+    {
+      "id": "DOC-029",
+      "category": "KYC Form",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "negative_no_pii"
+      ],
+      "text": "IndusTrust Housing Finance - Standard CKYC Document Checklist\nForm Template Version: CKYC-TMP-2026.2\n\nRequired Officially Valid Documents (OVDs) for individual onboarding:\n1. Proof of Identity and Address (any one government-issued photo ID).\n2. Recent passport-size photograph and signed declaration.\n3. Tax registration document for proprietorship or corporate entities.\nNote: Leave all fields blank until customer consent is recorded on the digital portal.",
+      "annotations": []
+    },
+    {
+      "id": "DOC-030",
+      "category": "Loan Application",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people",
+        "repeated_names",
+        "similar_looking_names"
+      ],
+      "text": "ArthSetu Capital Services - Personal & MSME Loan Application\nApplication Ref: LN-2026-1070\n\nPrimary Applicant: Pooja Nair\nResidential Address: Plot 841, Chinar Plaza, MG Link Road, Indiranagar, Bengaluru, Karnataka - 560038\nPAN Card Number: PSJPN6691F\nAadhaar Number: 211265775699\nVoter ID (EPIC): GJR5626161\n\nCo-Applicant / Guarantor Details:\nCo-Applicant Name: Pooja Nayar\nCo-Applicant PAN: WDFPN2546W\n\nRequested Facility: Rs. 8,50,000 for 84 months.\nDeclaration: I, Pooja Nair, confirm that the particulars submitted above are accurate and consent to KYC verification.\nSigned by: Pooja Nair",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Pooja Nair",
+          "start": 111,
+          "end": 121
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 841, Chinar Plaza, MG Link Road, Indiranagar, Bengaluru, Karnataka - 560038",
+          "start": 143,
+          "end": 223
+        },
+        {
+          "entity_type": "PAN",
+          "value": "PSJPN6691F",
+          "start": 241,
+          "end": 251
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "211265775699",
+          "start": 268,
+          "end": 280
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "GJR5626161",
+          "start": 298,
+          "end": 308
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Pooja Nayar",
+          "start": 363,
+          "end": 374
+        },
+        {
+          "entity_type": "PAN",
+          "value": "WDFPN2546W",
+          "start": 393,
+          "end": 403
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Pooja Nair",
+          "start": 469,
+          "end": 479
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Pooja Nair",
+          "start": 583,
+          "end": 593
+        }
+      ]
+    },
+    {
+      "id": "DOC-031",
+      "category": "Loan Application",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "multiple_pii_entities",
+        "multiple_people",
+        "similar_looking_names"
+      ],
+      "text": "NavaBharat FinServe Ltd. - Loan Application Follow-up (Ref: LN-HN-531)\nNamaste Team,\nMera naam Siddharth Joshi hai aur maine Rs. 9,50,000 ke business loan ke liye apply kiya hai. Mera current address Unit 249, Vindhya Chambers, Vidya Mandir Marg, Indiranagar, Bengaluru, Karnataka 560038 hai.\nVerification ke liye maine apna PAN HQIPJ5694G aur Aadhaar number 989288019378 upload kar diya hai.\nHamari firm Narmada Textile Traders ka GSTIN 24SMSFN7321N5ZF bhi portal par dala hai.\nAddress confirmation ke liye Voter ID WBG3756103 attach hai.\nPassport copy (No. E7683695) bhi scan karke bhej di hai.\nIs loan mein co-applicant Siddharth Joglekar hain, jinka PAN GRAPJ1960R hai.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Siddharth Joshi",
+          "start": 95,
+          "end": 110
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Unit 249, Vindhya Chambers, Vidya Mandir Marg, Indiranagar, Bengaluru, Karnataka 560038",
+          "start": 200,
+          "end": 287
+        },
+        {
+          "entity_type": "PAN",
+          "value": "HQIPJ5694G",
+          "start": 329,
+          "end": 339
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "989288019378",
+          "start": 359,
+          "end": 371
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "24SMSFN7321N5ZF",
+          "start": 438,
+          "end": 453
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "WBG3756103",
+          "start": 517,
+          "end": 527
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "E7683695",
+          "start": 559,
+          "end": 567
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Siddharth Joglekar",
+          "start": 623,
+          "end": 641
+        },
+        {
+          "entity_type": "PAN",
+          "value": "GRAPJ1960R",
+          "start": 658,
+          "end": 668
+        }
+      ]
+    },
+    {
+      "id": "DOC-032",
+      "category": "Loan Application",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "negative_no_pii"
+      ],
+      "text": "ArthSetu Capital Services - Pre-Application Query (Ref: INQ-90412)\nNamaste Team,\nKya aap bata sakte hain ki MSME machinery loan ke liye minimum turnover requirement kitna hai? Interest rate floating rahega ya fixed aur processing fee kitni lagti hai? Abhi humne koi document ya applicant details submit nahi kiye hain, bas general jankari chahiye.",
+      "annotations": []
+    },
+    {
+      "id": "DOC-033",
+      "category": "Customer Support Ticket",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "repeated_names"
+      ],
+      "text": "Ticket ID: TKT-2026-8433 | Service Desk: NavaBharat FinServe Ltd.\nSubject: Profile & Document Mismatch Correction for Ananya Deshpande\n\nHi Team,\nMy account dashboard shows a spelling mismatch on PAN UALPD4894V and Aadhaar 5931 8520 6530. Please update my mailing address to Unit 281, Kaveri Apartments, Parkside Extension, Satellite, Ahmedabad, Gujarat 380015.\nI am attaching my Voter ID UPR8162778 as supporting ID.\nThanks,\nAnanya Deshpande",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Ananya Deshpande",
+          "start": 118,
+          "end": 134
+        },
+        {
+          "entity_type": "PAN",
+          "value": "UALPD4894V",
+          "start": 199,
+          "end": 209
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "5931 8520 6530",
+          "start": 222,
+          "end": 236
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Unit 281, Kaveri Apartments, Parkside Extension, Satellite, Ahmedabad, Gujarat 380015",
+          "start": 274,
+          "end": 359
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "UPR8162778",
+          "start": 388,
+          "end": 398
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Ananya Deshpande",
+          "start": 425,
+          "end": 441
+        }
+      ]
+    },
+    {
+      "id": "DOC-034",
+      "category": "Insurance Claim",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities"
+      ],
+      "text": "NavaJeevan General Insurance - Health & Motor Claim Settlement Form\nClaim Reference: CLM-2026-6334 | Claimed Amount: Rs. 1,65,500\n\nInsured / Policyholder Name: Kavya Subramanian\nInsured Residential Address: Unit 104, Ashoka Heights, Lakefront Avenue, Andheri West, Mumbai, Maharashtra 400053\nPolicyholder PAN: SQNPS1560G\nPolicyholder Aadhaar: 4718 1012 4029\nClaimant Voter ID: TND9708735\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Kavya Subramanian",
+          "start": 160,
+          "end": 177
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Unit 104, Ashoka Heights, Lakefront Avenue, Andheri West, Mumbai, Maharashtra 400053",
+          "start": 207,
+          "end": 291
+        },
+        {
+          "entity_type": "PAN",
+          "value": "SQNPS1560G",
+          "start": 310,
+          "end": 320
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "4718 1012 4029",
+          "start": 343,
+          "end": 357
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "TND9708735",
+          "start": 377,
+          "end": 387
+        }
+      ]
+    },
+    {
+      "id": "DOC-035",
+      "category": "Customer Support Ticket",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities"
+      ],
+      "text": "Ticket ID: TKT-2026-8435 | Service Desk: ArthSetu Capital Services\nSubject: Profile & Document Mismatch Correction for Ritika Kapoor\n\nHi Team,\nMy account dashboard shows a spelling mismatch on PAN VMEPK3706Q and Aadhaar 4055-9821-0569. Please update my mailing address to Unit 682, Vindhya Chambers, MG Link Road, Kothrud, Pune, Maharashtra 411038.\nI am attaching my Voter ID MHA7042993 as supporting ID.\nYou may also cross-check my Passport A3698691 on file.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Ritika Kapoor",
+          "start": 119,
+          "end": 132
+        },
+        {
+          "entity_type": "PAN",
+          "value": "VMEPK3706Q",
+          "start": 197,
+          "end": 207
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "4055-9821-0569",
+          "start": 220,
+          "end": 234
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Unit 682, Vindhya Chambers, MG Link Road, Kothrud, Pune, Maharashtra 411038",
+          "start": 272,
+          "end": 347
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "MHA7042993",
+          "start": 376,
+          "end": 386
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "A3698691",
+          "start": 442,
+          "end": 450
+        }
+      ]
+    },
+    {
+      "id": "DOC-036",
+      "category": "Loan Application",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "multiple_pii_entities",
+        "multiple_people",
+        "similar_looking_names"
+      ],
+      "text": "Suraksha MicroCredit Corp. - Loan Application Follow-up (Ref: LN-HN-536)\nNamaste Team,\nMera naam Deepak Gupta hai aur maine Rs. 12,00,000 ke business loan ke liye apply kiya hai. Mera current address Unit 347, Vindhya Chambers, Station Cross Lane, Gomti Nagar, Lucknow, Uttar Pradesh 226010 hai.\nVerification ke liye maine apna PAN NOUPG7173H aur Aadhaar number 7482-6872-8689 upload kar diya hai.\nHamari firm Surya Solar Systems ka GSTIN 27OEGCS8890GBZW bhi portal par dala hai.\nPassport copy (No. P2806172) bhi scan karke bhej di hai.\nIs loan mein co-applicant Deepak Goel hain, jinka PAN JBTPG5191N hai.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Deepak Gupta",
+          "start": 97,
+          "end": 109
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Unit 347, Vindhya Chambers, Station Cross Lane, Gomti Nagar, Lucknow, Uttar Pradesh 226010",
+          "start": 200,
+          "end": 290
+        },
+        {
+          "entity_type": "PAN",
+          "value": "NOUPG7173H",
+          "start": 332,
+          "end": 342
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "7482-6872-8689",
+          "start": 362,
+          "end": 376
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "27OEGCS8890GBZW",
+          "start": 439,
+          "end": 454
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "P2806172",
+          "start": 499,
+          "end": 507
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Deepak Goel",
+          "start": 563,
+          "end": 574
+        },
+        {
+          "entity_type": "PAN",
+          "value": "JBTPG5191N",
+          "start": 591,
+          "end": 601
+        }
+      ]
+    },
+    {
+      "id": "DOC-037",
+      "category": "Insurance Claim",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "multiple_pii_entities"
+      ],
+      "text": "Pragati Shield Assurance - Claim Desk Escalation (CLM-HN-2237)\nNamaste Claim Team,\nMain Rahul Mehta bol raha hoon. Mera Rs. 3,40,000 ka hospitalization claim abhi tak pending hai.\nDischarge summary ke saath maine address Flat A-662, Ashoka Heights, Station Cross Lane, Kothrud, Pune, Maharashtra 411038, PAN PBVPM6688C aur Aadhaar 7844 3655 1642 bhej diya hai.\nIdentity ke liye Voter ID GJR4131780 bhi attach kiya tha.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Rahul Mehta",
+          "start": 88,
+          "end": 99
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Flat A-662, Ashoka Heights, Station Cross Lane, Kothrud, Pune, Maharashtra 411038",
+          "start": 221,
+          "end": 302
+        },
+        {
+          "entity_type": "PAN",
+          "value": "PBVPM6688C",
+          "start": 308,
+          "end": 318
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "7844 3655 1642",
+          "start": 331,
+          "end": 345
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "GJR4131780",
+          "start": 387,
+          "end": 397
+        }
+      ]
+    },
+    {
+      "id": "DOC-038",
+      "category": "Customer Support Ticket",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people"
+      ],
+      "text": "Ticket ID: TKT-2026-8438 | Service Desk: Suraksha MicroCredit Corp.\nSubject: Profile & Document Mismatch Correction for Deepak Gupta\n\nHi Team,\nMy account dashboard shows a spelling mismatch on PAN ENNPG1226R and Aadhaar 7889 4422 5042. Please update my mailing address to Flat B-850, Parijat Arcade, Heritage Market Road, Banjara Hills, Hyderabad, Telangana - 500034.\nYou may also cross-check my Passport B3097323 on file.\nKindly link my proprietorship Narmada Textile Traders GSTIN 29ZLICN5255J2ZM to the invoice profile.\nNote: Do not confuse my profile with Rekha Choudhary (PAN: FJRPC7355V), who holds a separate folio.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Deepak Gupta",
+          "start": 120,
+          "end": 132
+        },
+        {
+          "entity_type": "PAN",
+          "value": "ENNPG1226R",
+          "start": 197,
+          "end": 207
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "7889 4422 5042",
+          "start": 220,
+          "end": 234
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Flat B-850, Parijat Arcade, Heritage Market Road, Banjara Hills, Hyderabad, Telangana - 500034",
+          "start": 272,
+          "end": 366
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "B3097323",
+          "start": 405,
+          "end": 413
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "29ZLICN5255J2ZM",
+          "start": 483,
+          "end": 498
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Rekha Choudhary",
+          "start": 560,
+          "end": 575
+        },
+        {
+          "entity_type": "PAN",
+          "value": "FJRPC7355V",
+          "start": 582,
+          "end": 592
+        }
+      ]
+    },
+    {
+      "id": "DOC-039",
+      "category": "Customer Support Ticket",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people",
+        "repeated_names"
+      ],
+      "text": "Ticket ID: TKT-2026-8439 | Service Desk: NavaBharat FinServe Ltd.\nSubject: Profile & Document Mismatch Correction for Siddharth Joshi\n\nHi Team,\nMy account dashboard shows a spelling mismatch on PAN CWCPJ7277V and Aadhaar 4168-2244-4049. Please update my mailing address to House No. 661, Narmada Towers, Parkside Extension, Gomti Nagar, Lucknow, Uttar Pradesh - 226010.\nYou may also cross-check my Passport T6345947 on file.\nKindly link my proprietorship Parijat Retail Ventures GSTIN 27RWHFP3837OBZM to the invoice profile.\nNote: Do not confuse my profile with Nisha Venkatesh (PAN: LLCPV1546D), who holds a separate folio.\nThanks,\nSiddharth Joshi",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Siddharth Joshi",
+          "start": 118,
+          "end": 133
+        },
+        {
+          "entity_type": "PAN",
+          "value": "CWCPJ7277V",
+          "start": 198,
+          "end": 208
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "4168-2244-4049",
+          "start": 221,
+          "end": 235
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "House No. 661, Narmada Towers, Parkside Extension, Gomti Nagar, Lucknow, Uttar Pradesh - 226010",
+          "start": 273,
+          "end": 368
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "T6345947",
+          "start": 407,
+          "end": 415
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "27RWHFP3837OBZM",
+          "start": 485,
+          "end": 500
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Nisha Venkatesh",
+          "start": 562,
+          "end": 577
+        },
+        {
+          "entity_type": "PAN",
+          "value": "LLCPV1546D",
+          "start": 584,
+          "end": 594
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Siddharth Joshi",
+          "start": 633,
+          "end": 648
+        }
+      ]
+    },
+    {
+      "id": "DOC-040",
+      "category": "Loan Application",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people",
+        "similar_looking_names"
+      ],
+      "text": "Subject: Home Improvement Loan Request - Applicant Sneha Kulkarni\nLender: Suraksha MicroCredit Corp. | File ID: HLF-3140\n\nDear Credit Underwriting Team,\nPlease review the loan dossier for Sneha Kulkarni, residing at House No. 721, Kaveri Apartments, Banyan Grove Street, Gomti Nagar, Lucknow, Uttar Pradesh - 226010. The applicant has enclosed PAN XOMPK9475S and Aadhaar 5605 5391 7710 for e-KYC.\nSecondary address proof submitted: Voter ID DLH8380031.\nJoint borrower Sneha Kulshreshtha (Aadhaar: 238009645141, PAN: PTUPK5733Y) has co-signed the mandate.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Sneha Kulkarni",
+          "start": 51,
+          "end": 65
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Sneha Kulkarni",
+          "start": 188,
+          "end": 202
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "House No. 721, Kaveri Apartments, Banyan Grove Street, Gomti Nagar, Lucknow, Uttar Pradesh - 226010",
+          "start": 216,
+          "end": 315
+        },
+        {
+          "entity_type": "PAN",
+          "value": "XOMPK9475S",
+          "start": 348,
+          "end": 358
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "5605 5391 7710",
+          "start": 371,
+          "end": 385
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "DLH8380031",
+          "start": 441,
+          "end": 451
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Sneha Kulshreshtha",
+          "start": 468,
+          "end": 486
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "238009645141",
+          "start": 497,
+          "end": 509
+        },
+        {
+          "entity_type": "PAN",
+          "value": "PTUPK5733Y",
+          "start": 516,
+          "end": 526
+        }
+      ]
+    },
+    {
+      "id": "DOC-041",
+      "category": "KYC Form",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people"
+      ],
+      "text": "Merchant Onboarding KYC Dossier (NavaBharat FinServe Ltd.)\nOnboarding Ticket: ONB-7241\n\nBeneficial Owner: Nikhil Banerjee\nCommunication Address: House No. 491, Neelgiri Bhavan, Banyan Grove Street, Kothrud, Pune, Maharashtra 411038\nIndividual PAN: VJJPB6279F\nAadhaar Ref: 710856595795\nMerchant Legal Name: Deccan Agro Logistics LLP\nRegistered GSTIN: 07BZEFD5599X6ZL\nPassport OVD: H7787908\nSecond Signatory: Devika Nair (PAN: OVDPN7900P)\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Nikhil Banerjee",
+          "start": 106,
+          "end": 121
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "House No. 491, Neelgiri Bhavan, Banyan Grove Street, Kothrud, Pune, Maharashtra 411038",
+          "start": 145,
+          "end": 231
+        },
+        {
+          "entity_type": "PAN",
+          "value": "VJJPB6279F",
+          "start": 248,
+          "end": 258
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "710856595795",
+          "start": 272,
+          "end": 284
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "07BZEFD5599X6ZL",
+          "start": 350,
+          "end": 365
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "H7787908",
+          "start": 380,
+          "end": 388
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Devika Nair",
+          "start": 407,
+          "end": 418
+        },
+        {
+          "entity_type": "PAN",
+          "value": "OVDPN7900P",
+          "start": 425,
+          "end": 435
+        }
+      ]
+    },
+    {
+      "id": "DOC-042",
+      "category": "KYC Form",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "multiple_pii_entities",
+        "repeated_names"
+      ],
+      "text": "ArthSetu Capital Services - Video KYC Update Request (KYC-HN-642)\nHello Support,\nMera naam Gayatri Pillai hai aur mujhe apna annual re-KYC complete karwana hai. Naya address Unit 816, Lotus Residency, MG Link Road, Edappally, Kochi, Kerala 682024 update kar dijiye.\nMaine Aadhaar 3280-8276-4076 aur PAN card HCYPP6835P verify kar liya hai.\nPurane proof mein Voter ID MHA3113037 diya tha.\nPlease Gayatri Pillai ka KYC link SMS par bhej dein.",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Gayatri Pillai",
+          "start": 91,
+          "end": 105
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Unit 816, Lotus Residency, MG Link Road, Edappally, Kochi, Kerala 682024",
+          "start": 174,
+          "end": 246
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "3280-8276-4076",
+          "start": 280,
+          "end": 294
+        },
+        {
+          "entity_type": "PAN",
+          "value": "HCYPP6835P",
+          "start": 308,
+          "end": 318
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "MHA3113037",
+          "start": 367,
+          "end": 377
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Gayatri Pillai",
+          "start": 395,
+          "end": 409
+        }
+      ]
+    },
+    {
+      "id": "DOC-043",
+      "category": "Insurance Claim",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "repeated_names"
+      ],
+      "text": "ArogyaKavach Health & Life - Health & Motor Claim Settlement Form\nClaim Reference: CLM-2026-6343 | Claimed Amount: Rs. 4,80,000\n\nInsured / Policyholder Name: Ishita Chatterjee\nInsured Residential Address: Plot 179, Neelgiri Bhavan, Vidya Mandir Marg, Satellite, Ahmedabad, Gujarat - 380015\nPolicyholder PAN: AXJPC3276Y\nPolicyholder Aadhaar: 684869610324\nClaimant Voter ID: KRN1214679\n\nSettlement Note: NEFT reimbursement approved in favour of Ishita Chatterjee. Discharge voucher signed by Ishita Chatterjee.",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Ishita Chatterjee",
+          "start": 158,
+          "end": 175
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 179, Neelgiri Bhavan, Vidya Mandir Marg, Satellite, Ahmedabad, Gujarat - 380015",
+          "start": 205,
+          "end": 289
+        },
+        {
+          "entity_type": "PAN",
+          "value": "AXJPC3276Y",
+          "start": 308,
+          "end": 318
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "684869610324",
+          "start": 341,
+          "end": 353
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "KRN1214679",
+          "start": 373,
+          "end": 383
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Ishita Chatterjee",
+          "start": 443,
+          "end": 460
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Ishita Chatterjee",
+          "start": 490,
+          "end": 507
+        }
+      ]
+    },
+    {
+      "id": "DOC-044",
+      "category": "Loan Application",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people",
+        "similar_looking_names"
+      ],
+      "text": "WORKING CAPITAL LOAN APPLICATION (ArthSetu Capital Services)\nSubmission Date: 10-11-2026 | Branch Code: BR-244\n\n1. Borrower Name: Ananya Deshmukh\n2. Registered Office / Residence: Flat 157, Gulmohar Greens, Banyan Grove Street, Gomti Nagar, Lucknow, Uttar Pradesh - 226010\n3. Tax ID (PAN): QZWPD7741X\n4. UIDAI Aadhaar: 845228381854\n6. Elector ID: TLG9671271\n7. Passport Ref: V1133648\nAuthorized Co-Signatory: Ananya Deshpande | Address: Flat C-350, Vindhya Chambers, Vidya Mandir Marg, Satellite, Ahmedabad, Gujarat 380015\nLoan Amount Requested: Rs. 6,75,000 (84 months).\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Ananya Deshmukh",
+          "start": 130,
+          "end": 145
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Flat 157, Gulmohar Greens, Banyan Grove Street, Gomti Nagar, Lucknow, Uttar Pradesh - 226010",
+          "start": 180,
+          "end": 272
+        },
+        {
+          "entity_type": "PAN",
+          "value": "QZWPD7741X",
+          "start": 290,
+          "end": 300
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "845228381854",
+          "start": 319,
+          "end": 331
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "TLG9671271",
+          "start": 347,
+          "end": 357
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "V1133648",
+          "start": 375,
+          "end": 383
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Ananya Deshpande",
+          "start": 409,
+          "end": 425
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Flat C-350, Vindhya Chambers, Vidya Mandir Marg, Satellite, Ahmedabad, Gujarat 380015",
+          "start": 437,
+          "end": 522
+        }
+      ]
+    },
+    {
+      "id": "DOC-045",
+      "category": "Customer Support Ticket",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "multiple_pii_entities",
+        "multiple_people"
+      ],
+      "text": "Support Ticket #TKT-HN-9145 (ArthSetu Capital Services)\nHi Customer Care,\nMera naam Vikram Singh hai. Mera statement aur debit card galat ghar par dispatch ho gaya hai.\nAsli delivery address yeh hai: Unit 320, Gulmohar Greens, Heritage Market Road, Saket, New Delhi, Delhi - 110017.\nConfirmation ke liye PAN KVFPS8049J aur Aadhaar 7526 1352 2465 verify kar sakte hain.\nInternational card activate karne ke liye Passport C8176272 bhi diya tha.\nTax invoice par Chinar Packaging Solutions ka GSTIN 19YSBFC4923VAZT print hona chahiye.\nShayad aapne galti se Devika Nair ka record merge kar diya hai.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Vikram Singh",
+          "start": 84,
+          "end": 96
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Unit 320, Gulmohar Greens, Heritage Market Road, Saket, New Delhi, Delhi - 110017",
+          "start": 200,
+          "end": 281
+        },
+        {
+          "entity_type": "PAN",
+          "value": "KVFPS8049J",
+          "start": 308,
+          "end": 318
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "7526 1352 2465",
+          "start": 331,
+          "end": 345
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "C8176272",
+          "start": 420,
+          "end": 428
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "19YSBFC4923VAZT",
+          "start": 495,
+          "end": 510
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Devika Nair",
+          "start": 553,
+          "end": 564
+        }
+      ]
+    },
+    {
+      "id": "DOC-046",
+      "category": "Loan Application",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "multiple_pii_entities",
+        "multiple_people",
+        "repeated_names",
+        "similar_looking_names"
+      ],
+      "text": "Suraksha MicroCredit Corp. - Loan Application Follow-up (Ref: LN-HN-546)\nNamaste Team,\nMera naam Rahul Mehta hai aur maine Rs. 9,50,000 ke business loan ke liye apply kiya hai. Mera current address Plot 476, Gulmohar Greens, Parkside Extension, Adyar, Chennai, Tamil Nadu 600020 hai.\nVerification ke liye maine apna PAN LLLPM8837Z aur Aadhaar number 6990-9807-7461 upload kar diya hai.\nAddress confirmation ke liye Voter ID KRL4097821 attach hai.\nIs loan mein co-applicant Rahul Mittal hain, jinka PAN ZNNPM9285F hai.\nKripya sanction status Rahul Mehta ko email par update karein. Dhanyavaad, Rahul Mehta.",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Rahul Mehta",
+          "start": 97,
+          "end": 108
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 476, Gulmohar Greens, Parkside Extension, Adyar, Chennai, Tamil Nadu 600020",
+          "start": 198,
+          "end": 278
+        },
+        {
+          "entity_type": "PAN",
+          "value": "LLLPM8837Z",
+          "start": 320,
+          "end": 330
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "6990-9807-7461",
+          "start": 350,
+          "end": 364
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "KRL4097821",
+          "start": 424,
+          "end": 434
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Rahul Mittal",
+          "start": 473,
+          "end": 485
+        },
+        {
+          "entity_type": "PAN",
+          "value": "ZNNPM9285F",
+          "start": 502,
+          "end": 512
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Rahul Mehta",
+          "start": 541,
+          "end": 552
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Rahul Mehta",
+          "start": 593,
+          "end": 604
+        }
+      ]
+    },
+    {
+      "id": "DOC-047",
+      "category": "KYC Form",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people",
+        "repeated_names"
+      ],
+      "text": "Merchant Onboarding KYC Dossier (Suraksha MicroCredit Corp.)\nOnboarding Ticket: ONB-7247\n\nBeneficial Owner: Pranav Joshi\nCommunication Address: Flat A-702, Neelgiri Bhavan, Lakefront Avenue, Gomti Nagar, Lucknow, Uttar Pradesh 226010\nIndividual PAN: ZBTPJ4757Y\nAadhaar Ref: 521028052056\nMerchant Legal Name: Surya Solar Systems\nRegistered GSTIN: 36ZYUPS5381GAZP\nSecond Signatory: Aparna Sen (PAN: MXZPS3213L)\nCompliance Sign-off: PEP screening cleared for Pranav Joshi.",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Pranav Joshi",
+          "start": 108,
+          "end": 120
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Flat A-702, Neelgiri Bhavan, Lakefront Avenue, Gomti Nagar, Lucknow, Uttar Pradesh 226010",
+          "start": 144,
+          "end": 233
+        },
+        {
+          "entity_type": "PAN",
+          "value": "ZBTPJ4757Y",
+          "start": 250,
+          "end": 260
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "521028052056",
+          "start": 274,
+          "end": 286
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "36ZYUPS5381GAZP",
+          "start": 346,
+          "end": 361
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Aparna Sen",
+          "start": 380,
+          "end": 390
+        },
+        {
+          "entity_type": "PAN",
+          "value": "MXZPS3213L",
+          "start": 397,
+          "end": 407
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Pranav Joshi",
+          "start": 456,
+          "end": 468
+        }
+      ]
+    },
+    {
+      "id": "DOC-048",
+      "category": "Insurance Claim",
+      "language": "hinglish",
+      "scenarios": [
+        "hinglish",
+        "multiple_pii_entities"
+      ],
+      "text": "Pragati Shield Assurance - Claim Desk Escalation (CLM-HN-2248)\nNamaste Claim Team,\nMain Diya Krishnan bol raha hoon. Mera Rs. 3,40,000 ka hospitalization claim abhi tak pending hai.\nDischarge summary ke saath maine address Plot 355, Chinar Plaza, Station Cross Lane, Andheri West, Mumbai, Maharashtra - 400053, PAN SVBPK3975Z aur Aadhaar 947248700289 bhej diya hai.\nIdentity ke liye Voter ID TLG4742492 bhi attach kiya tha.\nTravel medical cover ke liye Passport S7879199 number check karein.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Diya Krishnan",
+          "start": 88,
+          "end": 101
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 355, Chinar Plaza, Station Cross Lane, Andheri West, Mumbai, Maharashtra - 400053",
+          "start": 223,
+          "end": 309
+        },
+        {
+          "entity_type": "PAN",
+          "value": "SVBPK3975Z",
+          "start": 315,
+          "end": 325
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "947248700289",
+          "start": 338,
+          "end": 350
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "TLG4742492",
+          "start": 392,
+          "end": 402
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "S7879199",
+          "start": 462,
+          "end": 470
+        }
+      ]
+    },
+    {
+      "id": "DOC-049",
+      "category": "Customer Support Ticket",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people"
+      ],
+      "text": "Ticket ID: TKT-2026-8449 | Service Desk: Suraksha MicroCredit Corp.\nSubject: Profile & Document Mismatch Correction for Vivaan Deshmukh\n\nHi Team,\nMy account dashboard shows a spelling mismatch on PAN TWWPD2275S and Aadhaar 9701 7533 7629. Please update my mailing address to Unit 145, Gulmohar Greens, Heritage Market Road, Satellite, Ahmedabad, Gujarat 380015.\nKindly link my proprietorship Sahyadri Hardware & Tools GSTIN 07YOOFS3031YBZH to the invoice profile.\nNote: Do not confuse my profile with Pallavi Kulkarni (PAN: ZWPPK2904Y), who holds a separate folio.\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Vivaan Deshmukh",
+          "start": 120,
+          "end": 135
+        },
+        {
+          "entity_type": "PAN",
+          "value": "TWWPD2275S",
+          "start": 200,
+          "end": 210
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "9701 7533 7629",
+          "start": 223,
+          "end": 237
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Unit 145, Gulmohar Greens, Heritage Market Road, Satellite, Ahmedabad, Gujarat 380015",
+          "start": 275,
+          "end": 360
+        },
+        {
+          "entity_type": "GSTIN",
+          "value": "07YOOFS3031YBZH",
+          "start": 424,
+          "end": 439
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Pallavi Kulkarni",
+          "start": 501,
+          "end": 517
+        },
+        {
+          "entity_type": "PAN",
+          "value": "ZWPPK2904Y",
+          "start": 524,
+          "end": 534
+        }
+      ]
+    },
+    {
+      "id": "DOC-050",
+      "category": "Loan Application",
+      "language": "en",
+      "scenarios": [
+        "english",
+        "multiple_pii_entities",
+        "multiple_people",
+        "similar_looking_names"
+      ],
+      "text": "WORKING CAPITAL LOAN APPLICATION (IndusTrust Housing Finance)\nSubmission Date: 10-11-2026 | Branch Code: BR-250\n\n1. Borrower Name: Meera Iyer\n2. Registered Office / Residence: Plot 45, Chinar Plaza, MG Link Road, Indiranagar, Bengaluru, Karnataka - 560038\n3. Tax ID (PAN): YLFPI6285D\n4. UIDAI Aadhaar: 5198-7673-8837\n6. Elector ID: RJS7643015\n7. Passport Ref: G7633124\nAuthorized Co-Signatory: Meera Iyengar | Address: Plot 594, Gulmohar Greens, Temple View Marg, Shivaji Nagar, Nagpur, Maharashtra 440010\nLoan Amount Requested: Rs. 8,50,000 (60 months).\n",
+      "annotations": [
+        {
+          "entity_type": "PERSON",
+          "value": "Meera Iyer",
+          "start": 131,
+          "end": 141
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 45, Chinar Plaza, MG Link Road, Indiranagar, Bengaluru, Karnataka - 560038",
+          "start": 176,
+          "end": 255
+        },
+        {
+          "entity_type": "PAN",
+          "value": "YLFPI6285D",
+          "start": 273,
+          "end": 283
+        },
+        {
+          "entity_type": "AADHAAR",
+          "value": "5198-7673-8837",
+          "start": 302,
+          "end": 316
+        },
+        {
+          "entity_type": "VOTER_ID",
+          "value": "RJS7643015",
+          "start": 332,
+          "end": 342
+        },
+        {
+          "entity_type": "PASSPORT",
+          "value": "G7633124",
+          "start": 360,
+          "end": 368
+        },
+        {
+          "entity_type": "PERSON",
+          "value": "Meera Iyengar",
+          "start": 394,
+          "end": 407
+        },
+        {
+          "entity_type": "ADDRESS",
+          "value": "Plot 594, Gulmohar Greens, Temple View Marg, Shivaji Nagar, Nagpur, Maharashtra 440010",
+          "start": 419,
+          "end": 505
+        }
+      ]
+    }
+  ]
+}
