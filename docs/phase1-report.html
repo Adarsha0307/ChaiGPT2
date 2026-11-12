@@ -1,0 +1,495 @@
+<title>PS-02 Privacy Gateway</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: single reading column (~980px) of numbered report sections; the pipeline drawn as a wrapping row of stages; PII shown as highlighter marks, masked values as token chips. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #141a24;
+  --muted: #5a6474;
+  --line: #dde2ea;
+  --accent: #2647d6;         /* gateway blue */
+  --accent-soft: #e6ebfd;
+  --pii: #ffe08a;            /* highlighter on raw personal data */
+  --pii-ink: #5c4300;
+  --token: #d9f2ea;          /* masked placeholder chip */
+  --token-ink: #0b5a43;
+  --ok: #157f3b;
+  --ok-soft: #e1f4e7;
+  --warn: #9a5b00;
+  --warn-soft: #fdf0d9;
+  --stub: #6b7280;
+  --stub-soft: #eef0f3;
+  --f-display: "Schibsted Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f131a; --surface: #171c25; --ink: #e8ecf3; --muted: #9aa4b5; --line: #2a3140;
+    --accent: #8ea4ff; --accent-soft: #1d2645;
+    --pii: #6b5310; --pii-ink: #ffe7a3;
+    --token: #12392e; --token-ink: #8fe3c6;
+    --ok: #5fd38a; --ok-soft: #12301f; --warn: #f2b65a; --warn-soft: #36280f;
+    --stub: #a3abb8; --stub-soft: #232a36;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f131a; --surface: #171c25; --ink: #e8ecf3; --muted: #9aa4b5; --line: #2a3140;
+  --accent: #8ea4ff; --accent-soft: #1d2645;
+  --pii: #6b5310; --pii-ink: #ffe7a3;
+  --token: #12392e; --token-ink: #8fe3c6;
+  --ok: #5fd38a; --ok-soft: #12301f; --warn: #f2b65a; --warn-soft: #36280f;
+  --stub: #a3abb8; --stub-soft: #232a36;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.6;
+}
+.wrap {
+  max-width: 980px; margin: 0 auto;
+  padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 56px;
+}
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(2rem, 5vw, 3.1rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 1.05rem; font-weight: 700; }
+p { margin: 0; max-width: 68ch; }
+code, .mono { font-family: var(--f-mono); font-size: 0.88em; }
+.eyebrow {
+  font-family: var(--f-mono); font-size: 0.75rem; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--accent); font-weight: 600;
+}
+.muted { color: var(--muted); }
+section { display: grid; gap: 20px; }
+.sec-head { display: grid; gap: 6px; }
+
+/* marks */
+.pii { background: var(--pii); color: var(--pii-ink); padding: 1px 4px; border-radius: 3px; }
+.tok {
+  background: var(--token); color: var(--token-ink); padding: 1px 6px; border-radius: 4px;
+  font-family: var(--f-mono); font-size: 0.86em; font-weight: 600; white-space: nowrap;
+}
+
+/* header */
+header { display: grid; gap: 18px; }
+.lede { font-size: 1.15rem; color: var(--muted); max-width: 62ch; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.85rem; font-weight: 600; padding: 5px 12px; border-radius: 999px;
+  background: var(--ok-soft); color: var(--ok);
+}
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.info { background: var(--accent-soft); color: var(--accent); }
+.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+/* example: before / after */
+.example { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ex {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 16px; display: grid; gap: 8px; align-content: start; min-width: 0;
+}
+.ex .label { font-size: 0.78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.ex .txt { font-size: 0.98rem; line-height: 1.75; overflow-wrap: anywhere; }
+.ex.mid { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+@media (max-width: 760px) { .example { grid-template-columns: 1fr; } }
+
+/* pipeline */
+.flow-scroll { overflow-x: auto; padding-bottom: 6px; }
+.flow { display: flex; align-items: stretch; gap: 0; min-width: 860px; }
+.stage {
+  flex: 1 1 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 12px; display: grid; gap: 6px; align-content: start; min-width: 0;
+}
+.stage .n { font-family: var(--f-mono); font-size: 0.72rem; color: var(--muted); }
+.stage h3 { font-size: 0.98rem; }
+.stage p { font-size: 0.84rem; color: var(--muted); line-height: 1.45; }
+.stage .state {
+  justify-self: start; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.state.live { background: var(--ok-soft); color: var(--ok); }
+.state.stub { background: var(--stub-soft); color: var(--stub); }
+.stage.boundary { border: 2px dashed var(--accent); }
+.arrow { flex: 0 0 22px; display: grid; place-items: center; color: var(--muted); font-size: 1.1rem; }
+.flow-note { font-size: 0.88rem; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.85rem; color: var(--muted); align-items: center; }
+.legend span { display: inline-flex; gap: 6px; align-items: center; }
+.sw { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+
+/* tables */
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td.v { font-family: var(--f-mono); font-size: 0.84rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+td.layer { font-weight: 600; white-space: nowrap; }
+.tbl-stack { min-width: 720px; }
+.tbl-checks { min-width: 560px; }
+.res { font-weight: 700; white-space: nowrap; }
+.res.pass { color: var(--ok); }
+.res.note { color: var(--warn); }
+
+/* task list */
+.tasks { display: grid; gap: 10px; counter-reset: t; }
+.task {
+  display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 14px; align-items: start;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+}
+.task .num {
+  width: 34px; height: 34px; border-radius: 8px; background: var(--accent-soft); color: var(--accent);
+  display: grid; place-items: center; font-family: var(--f-mono); font-weight: 600; font-size: 0.9rem;
+}
+.task h3 { font-size: 1rem; }
+.task p { font-size: 0.9rem; color: var(--muted); }
+.task .done { font-size: 0.8rem; font-weight: 700; color: var(--ok); white-space: nowrap; }
+@media (max-width: 520px) { .task { grid-template-columns: 34px minmax(0, 1fr); } .task .done { grid-column: 2; } }
+
+/* entity grid */
+.ents { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.ent { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px; }
+.ent .t { font-family: var(--f-mono); font-weight: 600; font-size: 0.85rem; color: var(--accent); }
+.ent .d { font-size: 0.88rem; }
+.ent .e { font-family: var(--f-mono); font-size: 0.8rem; color: var(--muted); overflow-wrap: anywhere; }
+
+/* two-col cards */
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 680px) { .grid2 { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.card p { font-size: 0.92rem; color: var(--muted); }
+
+/* fixes */
+.fix { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.fix > div { padding: 14px 16px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.fix .prob { border-right: 1px solid var(--line); }
+.fix .k { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.fix .prob .k { color: var(--warn); }
+.fix .sol .k { color: var(--ok); }
+.fix p { font-size: 0.92rem; }
+@media (max-width: 620px) { .fix { grid-template-columns: 1fr; } .fix .prob { border-right: 0; border-bottom: 1px solid var(--line); } }
+.fixes { display: grid; gap: 10px; }
+
+/* repo tree */
+pre.tree {
+  margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 16px 18px; overflow-x: auto; font-family: var(--f-mono); font-size: 0.84rem; line-height: 1.65;
+}
+pre.tree .c { color: var(--muted); }
+
+/* roadmap */
+.road { display: grid; gap: 0; border-left: 2px solid var(--line); margin-left: 8px; }
+.ph { position: relative; padding: 0 0 20px 24px; display: grid; gap: 4px; }
+.ph:last-child { padding-bottom: 0; }
+.ph::before {
+  content: ""; position: absolute; left: -8px; top: 4px; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--surface); border: 2px solid var(--line);
+}
+.ph.now::before { background: var(--ok); border-color: var(--ok); }
+.ph .when { font-family: var(--f-mono); font-size: 0.78rem; color: var(--muted); }
+.ph p { font-size: 0.92rem; color: var(--muted); }
+
+footer { font-size: 0.85rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 18px; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">Problem statement PS-02 · Phase 1 report · 12 Nov 2026</span>
+  <h1>PS-02 Privacy Gateway</h1>
+  <p class="lede">A gateway that sits between a company's documents and a cloud AI model. It finds Indian personal data such as names, Aadhaar and PAN, swaps each one for a placeholder before anything leaves the laptop, and puts the real values back into the AI's answer.</p>
+  <div class="chips">
+    <span class="chip">Phase 1 complete</span>
+    <span class="chip">7 / 7 tests pass</span>
+    <span class="chip">All libraries and models load offline</span>
+    <span class="chip">Gemini API connected</span>
+    <span class="chip info">Next: Phase 2, detection</span>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">The idea in one example</span>
+    <h2>The AI never sees the real values</h2>
+  </div>
+  <div class="example">
+    <div class="ex">
+      <span class="label">1 · What the user sends</span>
+      <div class="txt">Mera naam <span class="pii">Rahul Sharma</span> hai. PAN <span class="pii">ABCDE1234F</span>, Aadhaar <span class="pii">2345 6789 0123</span>.</div>
+    </div>
+    <div class="ex mid">
+      <span class="label">2 · What leaves the laptop</span>
+      <div class="txt">Mera naam <span class="tok">&lt;PERSON_1&gt;</span> hai. PAN <span class="tok">&lt;PAN_1&gt;</span>, Aadhaar <span class="tok">&lt;AADHAAR_1&gt;</span>.</div>
+    </div>
+    <div class="ex">
+      <span class="label">3 · What the user gets back</span>
+      <div class="txt">The AI's summary, with <span class="pii">Rahul Sharma</span> and the other real values put back in place of the placeholders.</div>
+    </div>
+  </div>
+  <p class="muted">Highlighted text is real personal data. Green chips are placeholders. The table that links each placeholder to its real value stays in memory for one request only. It is never sent, logged or saved.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Workflow</span>
+    <h2>One request, six steps</h2>
+    <p class="muted">Every caller uses the same function, <code>process()</code>: the Streamlit UI, the FastAPI endpoint and the evaluation script. Phase 1 built this whole pipeline end to end. Three privacy steps are placeholders that pass text through unchanged, so the UI can be built now while Phases 2 and 3 fill them in.</p>
+  </div>
+  <div class="flow-scroll" role="region" aria-label="Request pipeline" tabindex="0">
+    <div class="flow">
+      <div class="stage">
+        <span class="n">STEP 1</span><h3>Detect</h3>
+        <p>Find the personal data and where each value sits in the text.</p>
+        <span class="state stub">Phase 2</span>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="stage">
+        <span class="n">STEP 2</span><h3>Mask</h3>
+        <p>Replace each value with a typed placeholder. The same value always gets the same placeholder.</p>
+        <span class="state stub">Phase 3</span>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="stage">
+        <span class="n">STEP 3</span><h3>Leak guard</h3>
+        <p>Check the outgoing text for any real value. If one is found, block the request.</p>
+        <span class="state stub">Phase 3</span>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="stage boundary">
+        <span class="n">STEP 4</span><h3>Send to the AI</h3>
+        <p>Gemini or an offline mock. Only masked text crosses this line, and the exact text sent is recorded.</p>
+        <span class="state live">Working</span>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="stage">
+        <span class="n">STEP 5</span><h3>Reinsert</h3>
+        <p>Put the real values back. Flag any placeholder the AI dropped or made up.</p>
+        <span class="state stub">Phase 3</span>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="stage">
+        <span class="n">STEP 6</span><h3>Result</h3>
+        <p>One record with every field the UI, the API and the evaluation need, timed separately for the gateway and the AI.</p>
+        <span class="state live">Working</span>
+      </div>
+    </div>
+  </div>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--ok-soft);border:1px solid var(--ok)"></i>Working now</span>
+    <span><i class="sw" style="background:var(--stub-soft);border:1px solid var(--stub)"></i>Placeholder in Phase 1, built in the phase shown</span>
+    <span><i class="sw" style="border:2px dashed var(--accent)"></i>The only point where data leaves the laptop</span>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Phase 1 deliverables · planned 6:05–6:20 PM</span>
+    <h2>What Phase 1 delivered</h2>
+  </div>
+  <div class="tasks">
+    <div class="task">
+      <span class="num">1</span>
+      <div><h3>Models downloaded, loading offline</h3><p>spaCy <code>en_core_web_lg</code> for language processing and GLiNER <code>gliner_multi_pii-v1</code> for names and addresses. Both load with no internet, so detection never calls an outside service.</p></div>
+      <span class="done">Done</span>
+    </div>
+    <div class="task">
+      <span class="num">2</span>
+      <div><h3>Repository, virtual environment, libraries</h3><p>Git repository with a Python virtual environment. All 9 required libraries import, and one more dependency the GLiNER model turned out to need (protobuf) was found and added.</p></div>
+      <span class="done">Done</span>
+    </div>
+    <div class="task">
+      <span class="num">3</span>
+      <div><h3>Gemini API key tested</h3><p>The key lives in a local <code>.env</code> file that Git ignores. A test call to <code>gemini-3.5-flash</code> came back successfully, and automatic retry handles Google's temporary overload errors.</p></div>
+      <span class="done">Done</span>
+    </div>
+    <div class="task">
+      <span class="num">4</span>
+      <div><h3>Shared contracts agreed and committed</h3><p>The data shapes every team member codes against, plus placeholder versions of each step, so the UI teammate (M3) could start building at 6:20 instead of waiting.</p></div>
+      <span class="done">Done</span>
+    </div>
+  </div>
+  <div class="card" style="border-color:var(--ok)">
+    <h3>Checkpoint: <code>process()</code> runs end to end on placeholder steps</h3>
+    <p>Passed. A document goes in, through all six steps, and a complete result comes out. This is covered by automated tests.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Tech stack</span>
+    <h2>What it is built with, and why</h2>
+    <p class="muted">Everything except the AI model runs on the laptop. Versions are the ones installed and tested.</p>
+  </div>
+  <div class="table-scroll">
+    <table class="tbl-stack">
+      <thead><tr><th>Layer</th><th>Technology</th><th>Version</th><th>Why we use it</th></tr></thead>
+      <tbody>
+        <tr><td class="layer">Language</td><td>Python</td><td class="v">3.14.7</td><td>The main language for NLP and AI libraries.</td></tr>
+        <tr><td class="layer">ID detection</td><td>Microsoft Presidio Analyzer</td><td class="v">2.2.366</td><td>Industry-standard PII detection. It has built-in recognizers for Aadhaar, PAN, GSTIN, Passport and Voter ID, with checksum validation and context words.</td></tr>
+        <tr><td class="layer">Anonymizing</td><td>Presidio Anonymizer</td><td class="v">2.2.366</td><td>Companion library for replacing detected spans.</td></tr>
+        <tr><td class="layer">Language model</td><td>spaCy + <code>en_core_web_lg</code></td><td class="v">3.8.18 / 3.8.0</td><td>The NLP engine Presidio runs on. It is also the fallback for finding names if GLiNER fails.</td></tr>
+        <tr><td class="layer">Name &amp; address</td><td>GLiNER <code>urchade/gliner_multi_pii-v1</code></td><td class="v">0.2.30</td><td>A multilingual model that finds names and addresses, including in Hinglish text, where regex can't help.</td></tr>
+        <tr><td class="layer">ML runtime</td><td>PyTorch + Hugging Face Transformers</td><td class="v">2.15.0 / 5.22.2</td><td>Runs the GLiNER model on the CPU, offline.</td></tr>
+        <tr><td class="layer">Cloud AI</td><td>Google Gemini through <code>google-genai</code> SDK</td><td class="v">3.2.0</td><td>Google's current official SDK. It only ever receives masked text.</td></tr>
+        <tr><td class="layer">Offline AI</td><td>MockBackend (our own)</td><td class="v">—</td><td>A fake AI for tests and evaluation: free, instant and repeatable. Phase 3 adds modes that reword, reorder, drop and fake placeholders.</td></tr>
+        <tr><td class="layer">API</td><td>FastAPI + Uvicorn</td><td class="v">0.162.5 / 0.54.0</td><td>The <code>POST /process</code> and <code>GET /audit</code> endpoints, with automatic <code>/docs</code> pages (Phase 4).</td></tr>
+        <tr><td class="layer">UI</td><td>Streamlit</td><td class="v">1.67.0</td><td>A quick web UI that shows the original, masked and restored text side by side. Built by M3.</td></tr>
+        <tr><td class="layer">Audit log</td><td>SQLite (built into Python)</td><td class="v">—</td><td>One row per request with entity types, the masked payload, model and timing. Never the real values (Phase 4).</td></tr>
+        <tr><td class="layer">Testing</td><td>pytest + httpx</td><td class="v">9.2.0 / 0.28.1</td><td>Automated tests for the pipeline, the contracts and Gemini retry. httpx will test the API.</td></tr>
+        <tr><td class="layer">Version control</td><td>Git</td><td class="v">—</td><td>Commits per phase. Ends with tag <code>backend-v1</code>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Coverage</span>
+    <h2>9 types of Indian personal data</h2>
+    <p class="muted">Each type gets its own placeholder: <span class="tok">&lt;TYPE_N&gt;</span>, numbered per document. The examples show the format only. They are not real records.</p>
+  </div>
+  <div class="ents">
+    <div class="ent"><span class="t">PERSON</span><span class="d">Full name</span><span class="e">Rahul Sharma</span></div>
+    <div class="ent"><span class="t">ADDRESS</span><span class="d">Postal address</span><span class="e">12 MG Road, Pune 411001</span></div>
+    <div class="ent"><span class="t">AADHAAR</span><span class="d">12-digit Aadhaar number</span><span class="e">XXXX XXXX XXXX</span></div>
+    <div class="ent"><span class="t">PAN</span><span class="d">Permanent Account Number</span><span class="e">ABCDE1234F</span></div>
+    <div class="ent"><span class="t">GSTIN</span><span class="d">15-character GST number</span><span class="e">27ABCDE1234F1Z5</span></div>
+    <div class="ent"><span class="t">VOTER_ID</span><span class="d">EPIC voter ID</span><span class="e">ABC1234567</span></div>
+    <div class="ent"><span class="t">PASSPORT</span><span class="d">Indian passport number</span><span class="e">A1234567</span></div>
+    <div class="ent"><span class="t">PHONE</span><span class="d">Indian mobile number</span><span class="e">+91 98XXX XXXXX</span></div>
+    <div class="ent"><span class="t">EMAIL</span><span class="d">Email address</span><span class="e">name@example.com</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Contracts</span>
+    <h2>The shared data shapes</h2>
+    <p class="muted">Agreed in Phase 1 so backend (M1, M2) and UI (M3) could work in parallel. They live in <code>gateway/contracts.py</code>.</p>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3><code>Entity</code></h3><p>One piece of personal data that was found: its type, where it starts and ends, the text, a confidence score and which detector found it.</p></div>
+    <div class="card"><h3><code>MaskResult</code></h3><p>The masked text and the placeholder-to-value table. That table exists only for one request and is never stored.</p></div>
+    <div class="card"><h3><code>LLMResponse</code></h3><p>The AI's answer, plus the exact text that was sent out, so we can prove what left the laptop.</p></div>
+    <div class="card"><h3><code>LeakCheck</code></h3><p>Pass or fail for the outgoing text. On a fail it lists only the types that leaked, never the values.</p></div>
+    <div class="card"><h3><code>ReinsertResult</code></h3><p>The final text, plus which placeholders were restored, which the AI dropped and which it made up.</p></div>
+    <div class="card"><h3><code>ProcessResult</code></h3><p>Everything about one request in a single record: 14 fields, including gateway and AI timing and whether the request was blocked.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Verification</span>
+    <h2>Test and setup results</h2>
+    <p class="muted">From <code>scripts/check_setup.py</code> and <code>pytest</code>, run on the development laptop.</p>
+  </div>
+  <div class="table-scroll">
+    <table class="tbl-checks">
+      <thead><tr><th>Check</th><th>Result</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr><td>Library imports</td><td class="res pass">PASS</td><td>All 9: Presidio analyzer and anonymizer, spaCy, GLiNER, FastAPI, Uvicorn, Streamlit, google-genai, protobuf</td></tr>
+        <tr><td>spaCy model</td><td class="res pass">PASS</td><td><code>en_core_web_lg</code> loads</td></tr>
+        <tr><td>GLiNER model</td><td class="res pass">PASS</td><td>Loads offline. On a Hinglish test sentence it found the name “Rahul Sharma” (score 0.9996) and the city “Pune” as an address.</td></tr>
+        <tr><td>Gemini API call</td><td class="res pass">PASS</td><td><code>gemini-3.5-flash</code> replied. Newer models (3.7, 3.8) were sometimes overloaded, and retry covers that.</td></tr>
+        <tr><td>Pipeline on placeholder steps</td><td class="res pass">PASS</td><td><code>process()</code> returns a complete result</td></tr>
+        <tr><td>Automated tests</td><td class="res pass">7 / 7</td><td>3 for the pipeline and contracts, 4 for Gemini retry, which run without network</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Privacy by design</span>
+    <h2>Safeguards already in place</h2>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>The AI only sees placeholders</h3><p>The Gemini code path only ever receives the finished prompt, which is built from masked text.</p></div>
+    <div class="card"><h3>Proof of what left</h3><p>Every response records the exact outgoing text, so the leak guard and the audit log check what really went out.</p></div>
+    <div class="card"><h3>Blocked, not forwarded</h3><p>If the leak guard fails, <code>process()</code> stops and sends nothing. This rule is already in the pipeline.</p></div>
+    <div class="card"><h3>The value table is short-lived</h3><p>The placeholder-to-value table is never logged, saved or sent, and it is thrown away after each request.</p></div>
+    <div class="card"><h3>Detection runs locally</h3><p>Presidio, spaCy and GLiNER all run on the laptop. No personal data goes to a detection service.</p></div>
+    <div class="card"><h3>Secrets stay out of Git</h3><p>The API key lives in a <code>.env</code> file that Git ignores. A retry resends the same masked prompt, so nothing new goes out.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Engineering log</span>
+    <h2>Problems found and fixed during Phase 1</h2>
+  </div>
+  <div class="fixes">
+    <div class="fix">
+      <div class="prob"><span class="k">Problem</span><p>The GLiNER model would not load. Its tokenizer failed with a confusing <code>tiktoken</code> error.</p></div>
+      <div class="sol"><span class="k">Fix</span><p>Found the real cause: a missing <code>protobuf</code> package. Installed it, added it to <code>requirements.txt</code>, and added a setup check for it.</p></div>
+    </div>
+    <div class="fix">
+      <div class="prob"><span class="k">Problem</span><p>Gemini returned 404. The planned model, <code>gemini-2.5-flash</code>, is retired for new API keys.</p></div>
+      <div class="sol"><span class="k">Fix</span><p>Listed the models the key can use and moved to a current one. The model can now be set in <code>.env</code> without a code change.</p></div>
+    </div>
+    <div class="fix">
+      <div class="prob"><span class="k">Problem</span><p>The newest Gemini models sometimes returned 503 errors when Google's servers were overloaded.</p></div>
+      <div class="sol"><span class="k">Fix</span><p>Automatic retry with growing waits of 2 s, 4 s and 8 s, for overload and rate-limit errors only. Bad keys and bad requests still fail right away. 4 tests cover this.</p></div>
+    </div>
+    <div class="fix">
+      <div class="prob"><span class="k">Finding</span><p>The plan assumed GSTIN needed a hand-written regex.</p></div>
+      <div class="sol"><span class="k">Result</span><p>Presidio's docs show a built-in GSTIN recognizer that validates the format, so Phase 2 has less to write and is more accurate.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Project layout</span>
+    <h2>Repository after Phase 1</h2>
+  </div>
+<pre class="tree">ps02-privacy-gateway/
+├── gateway/
+│   ├── contracts.py     <span class="c"># shared data shapes (agreed with M3)</span>
+│   ├── pipeline.py      <span class="c"># process(): the 6-step workflow</span>
+│   ├── detect.py        <span class="c"># step 1: placeholder, Phase 2</span>
+│   ├── mask.py          <span class="c"># step 2: placeholder, Phase 3</span>
+│   ├── leak_guard.py    <span class="c"># step 3: placeholder, Phase 3</span>
+│   ├── prompt.py        <span class="c"># tells the AI to keep &lt;TYPE_N&gt; exactly</span>
+│   ├── backends.py      <span class="c"># step 4: Gemini (with retry) + Mock</span>
+│   └── reinsert.py      <span class="c"># step 5: placeholder, Phase 3</span>
+├── scripts/check_setup.py  <span class="c"># one-command environment check</span>
+├── tests/                  <span class="c"># 7 automated tests</span>
+├── data/                   <span class="c"># dataset.json from M3 (50 docs)</span>
+├── requirements.txt
+└── .env                    <span class="c"># API key, never committed</span></pre>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Roadmap</span>
+    <h2>The 2-hour build plan</h2>
+  </div>
+  <div class="road">
+    <div class="ph now"><span class="when">6:05–6:20 PM</span><h3>Phase 1 · Setup</h3><p>Environment, models, Gemini, contracts. Complete.</p></div>
+    <div class="ph"><span class="when">6:20–6:50 PM</span><h3>Phase 2 · Detection</h3><p>Presidio India recognizers, extra regexes, GLiNER for names and addresses, merging overlapping finds, unit tests per ID type.</p></div>
+    <div class="ph"><span class="when">6:50–7:30 PM</span><h3>Phase 3 · Gateway core</h3><p>Masking, leak guard, all Mock AI modes, tolerant reinsertion. Then the real <code>process()</code> goes to M3 for the UI.</p></div>
+    <div class="ph"><span class="when">7:30–7:55 PM</span><h3>Phase 4 · Audit, API and evaluation</h3><p>SQLite audit log, FastAPI endpoints, tuning on the 50-document dataset, and <code>metrics_report.md</code> with leakage, precision, recall and latency.</p></div>
+    <div class="ph"><span class="when">7:55–8:05 PM</span><h3>Phase 5 · Verify and hand off</h3><p>Full evaluation on all 50 documents with a target of zero leaks, a live Gemini run on 5 documents, and tag <code>backend-v1</code>.</p></div>
+  </div>
+</section>
+
+<footer>
+  Team: M1 + M2 (backend: detection, gateway, API, evaluation) · M3 (dataset of 50 docs, Streamlit UI).
+  Report reflects commit <code>956736f</code> plus Gemini retry and model updates on <code>main</code>.
+</footer>
+
+</div>
