@@ -1,0 +1,432 @@
+<title>PS-02 Detection Engine</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: same single reading column as the Phase 1 report; detection drawn as a two-lane flow (rules lane + AI lane) that joins at the merge step; PII as highlighter marks colored by detector. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #141a24;
+  --muted: #5a6474;
+  --line: #dde2ea;
+  --accent: #2647d6;
+  --accent-soft: #e6ebfd;
+  --rule: #ffe08a;        /* found by Presidio rules */
+  --rule-ink: #5c4300;
+  --ai: #f6d4ec;          /* found by the GLiNER model */
+  --ai-ink: #6d1453;
+  --ok: #157f3b;
+  --ok-soft: #e1f4e7;
+  --warn: #9a5b00;
+  --warn-soft: #fdf0d9;
+  --f-display: "Schibsted Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f131a; --surface: #171c25; --ink: #e8ecf3; --muted: #9aa4b5; --line: #2a3140;
+    --accent: #8ea4ff; --accent-soft: #1d2645;
+    --rule: #6b5310; --rule-ink: #ffe7a3; --ai: #5a1d47; --ai-ink: #ffc6ec;
+    --ok: #5fd38a; --ok-soft: #12301f; --warn: #f2b65a; --warn-soft: #36280f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f131a; --surface: #171c25; --ink: #e8ecf3; --muted: #9aa4b5; --line: #2a3140;
+  --accent: #8ea4ff; --accent-soft: #1d2645;
+  --rule: #6b5310; --rule-ink: #ffe7a3; --ai: #5a1d47; --ai-ink: #ffc6ec;
+  --ok: #5fd38a; --ok-soft: #12301f; --warn: #f2b65a; --warn-soft: #36280f;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.6; }
+.wrap {
+  max-width: 980px; margin: 0 auto; padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 56px;
+}
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(2rem, 5vw, 3.1rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 1.05rem; font-weight: 700; }
+p { margin: 0; max-width: 68ch; }
+code { font-family: var(--f-mono); font-size: 0.88em; }
+.eyebrow { font-family: var(--f-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); font-weight: 600; }
+.muted { color: var(--muted); }
+section { display: grid; gap: 20px; }
+.sec-head { display: grid; gap: 6px; }
+
+.r { background: var(--rule); color: var(--rule-ink); padding: 1px 4px; border-radius: 3px; }
+.a { background: var(--ai); color: var(--ai-ink); padding: 1px 4px; border-radius: 3px; }
+.tag { font-family: var(--f-mono); font-size: 0.68em; font-weight: 600; opacity: 0.85; margin-left: 3px; }
+
+header { display: grid; gap: 18px; }
+.lede { font-size: 1.15rem; color: var(--muted); max-width: 62ch; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; padding: 5px 12px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); }
+.chip.info { background: var(--accent-soft); color: var(--accent); }
+.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 700px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 2px; }
+.stat .big { font-family: var(--f-display); font-size: 1.9rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.stat .lbl { font-size: 0.85rem; color: var(--muted); }
+
+/* demo doc */
+.doc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; font-size: 1.02rem; line-height: 2; overflow-wrap: anywhere; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.85rem; color: var(--muted); align-items: center; }
+.legend span { display: inline-flex; gap: 6px; align-items: center; }
+.sw { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+
+/* flow */
+.flow-scroll { overflow-x: auto; padding-bottom: 6px; }
+.flow { display: grid; grid-template-columns: 150px 22px 1fr 22px 170px 22px 150px; gap: 0; min-width: 860px; align-items: stretch; }
+.lanes { display: grid; gap: 10px; }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.box h3 { font-size: 0.98rem; }
+.box p { font-size: 0.83rem; color: var(--muted); line-height: 1.45; }
+.box .n { font-family: var(--f-mono); font-size: 0.7rem; color: var(--muted); }
+.box.rule { border-left: 4px solid var(--rule); }
+.box.ai { border-left: 4px solid var(--ai); }
+.box.key { border: 2px solid var(--accent); }
+.arrow { display: grid; place-items: center; color: var(--muted); font-size: 1.1rem; }
+
+/* tables */
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+th, td { text-align: left; padding: 10px 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td.v { font-family: var(--f-mono); font-size: 0.82rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+td.ty { font-family: var(--f-mono); font-weight: 600; color: var(--accent); white-space: nowrap; font-size: 0.85rem; }
+td.layer { font-weight: 600; white-space: nowrap; }
+.t-ids { min-width: 820px; }
+.t-stack { min-width: 700px; }
+.t-docs { min-width: 640px; }
+
+/* score bars */
+.scores { display: grid; gap: 10px; }
+.srow { display: grid; grid-template-columns: 210px minmax(0, 1fr) 54px; gap: 12px; align-items: center; font-size: 0.88rem; }
+.srow .name { min-width: 0; }
+.bar { position: relative; height: 16px; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.bar .base { position: absolute; inset: 0 auto 0 0; background: var(--rule); }
+.bar .boost { position: absolute; top: 0; bottom: 0; background: var(--accent); opacity: 0.55; }
+.bar .th { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); left: 40%; }
+.srow .val { font-family: var(--f-mono); font-size: 0.82rem; text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 560px) { .srow { grid-template-columns: minmax(0, 1fr) 54px; } .srow .bar { grid-column: 1 / -1; grid-row: 2; } }
+
+/* cards */
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 680px) { .grid2 { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.card p { font-size: 0.92rem; color: var(--muted); }
+.ex { font-size: 0.86rem; background: var(--bg); border-radius: 6px; padding: 8px 10px; line-height: 1.9; overflow-wrap: anywhere; }
+
+/* fixes */
+.fixes { display: grid; gap: 10px; }
+.fix { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.fix > div { padding: 14px 16px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.fix .prob { border-right: 1px solid var(--line); }
+.fix .k { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.fix .prob .k { color: var(--warn); }
+.fix .sol .k { color: var(--ok); }
+.fix p { font-size: 0.92rem; }
+@media (max-width: 620px) { .fix { grid-template-columns: 1fr; } .fix .prob { border-right: 0; border-bottom: 1px solid var(--line); } }
+
+/* tests */
+.tests { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+.test { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 2px; }
+.test .c { font-family: var(--f-display); font-weight: 800; font-size: 1.4rem; color: var(--ok); font-variant-numeric: tabular-nums; }
+.test .f { font-family: var(--f-mono); font-size: 0.76rem; color: var(--muted); overflow-wrap: anywhere; }
+.test .d { font-size: 0.86rem; }
+
+pre.tree { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; overflow-x: auto; font-family: var(--f-mono); font-size: 0.84rem; line-height: 1.65; }
+pre.tree .c { color: var(--muted); }
+
+.road { display: grid; border-left: 2px solid var(--line); margin-left: 8px; }
+.ph { position: relative; padding: 0 0 18px 24px; display: grid; gap: 4px; }
+.ph:last-child { padding-bottom: 0; }
+.ph::before { content: ""; position: absolute; left: -8px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); }
+.ph.done::before { background: var(--ok); border-color: var(--ok); }
+.ph .when { font-family: var(--f-mono); font-size: 0.78rem; color: var(--muted); }
+.ph p { font-size: 0.92rem; color: var(--muted); }
+
+footer { font-size: 0.85rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 18px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">Problem statement PS-02 · Phase 2 report · Detection</span>
+  <h1>PS-02 Detection Engine</h1>
+  <p class="lede">Phase 2 teaches the gateway to find personal data. Strict rules catch the Indian ID numbers. An AI model, running on the laptop, catches names and addresses. A merge step combines the two, so nothing is found twice and nothing found is left out.</p>
+  <div class="chips">
+    <span class="chip">Phase 2 complete</span>
+    <span class="chip">6:50 PM checkpoint passed</span>
+    <span class="chip">50 / 50 tests pass</span>
+    <span class="chip">Runs fully offline</span>
+    <span class="chip info">Next: Phase 3, masking</span>
+  </div>
+</header>
+
+<section>
+  <div class="stats">
+    <div class="stat"><span class="big">9</span><span class="lbl">types of personal data detected</span></div>
+    <div class="stat"><span class="big">13 / 13</span><span class="lbl">values found across 3 sample documents</span></div>
+    <div class="stat"><span class="big">~0.3 s</span><span class="lbl">to scan a document, once models are loaded</span></div>
+    <div class="stat"><span class="big">0</span><span class="lbl">calls to outside services for detection</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">See it work</span>
+    <h2>One Hinglish document, everything found</h2>
+    <p class="muted">This is the real output of <code>detect()</code> on a test sentence. The color shows which detector found each value.</p>
+  </div>
+  <div class="doc">
+    Mera naam <span class="a">Rahul Sharma<span class="tag">PERSON</span></span> hai. PAN <span class="r">ABCDE1234F<span class="tag">PAN</span></span>, Aadhaar <span class="r">2345 6789 0123<span class="tag">AADHAAR</span></span>. <span class="a">Rahul Sharma<span class="tag">PERSON</span></span> ka mobile <span class="r">98765 43210<span class="tag">PHONE</span></span> hai.
+  </div>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--rule)"></i>Found by rules (Presidio)</span>
+    <span><i class="sw" style="background:var(--ai)"></i>Found by the AI model (GLiNER)</span>
+  </div>
+  <p class="muted">Both mentions of the name are caught, even though the sentence mixes Hindi and English. The Aadhaar number here is made up and fails the official checksum, but it is still caught because the word "Aadhaar" sits right before it.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Workflow</span>
+    <h2>How detection works</h2>
+    <p class="muted">Two detectors run on the same text, each doing what it is best at. Their findings meet at the merge step, which decides the final list.</p>
+  </div>
+  <div class="flow-scroll" role="region" aria-label="Detection workflow" tabindex="0">
+    <div class="flow">
+      <div class="box"><span class="n">INPUT</span><h3>Document text</h3><p>Loan form, KYC record, support ticket, insurance claim. English or Hinglish.</p></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="lanes">
+        <div class="box rule"><span class="n">LANE A · RULES</span><h3>Presidio</h3><p>Patterns, checksums and nearby keywords find Aadhaar, PAN, GSTIN, Voter ID, Passport, phone and email.</p></div>
+        <div class="box ai"><span class="n">LANE B · AI MODEL</span><h3>GLiNER</h3><p>Reads the meaning of the text to find names and addresses. Long documents are read in overlapping 200-word chunks.</p></div>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="box key"><span class="n">MERGE</span><h3>Combine the findings</h3><p>Removes duplicates and settles overlaps. ID numbers win over names and addresses. Nothing flagged gets dropped.</p></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="box"><span class="n">OUTPUT</span><h3>Entity list</h3><p>Each item has its type, exact position, text, confidence and detector, ready for the Phase 3 masker. Repeats of a value are marked too.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Lane A · Rules</span>
+    <h2>How each ID is recognized</h2>
+    <p class="muted">Presidio checks each candidate in up to three ways: does it have the right shape, does its built-in check digit add up, and is a telling word nearby such as "PAN" or "Aadhaar". We load only these 7 recognizers. Presidio's others, like credit cards, IP addresses and dates, are switched off so they can't raise false alarms.</p>
+  </div>
+  <div class="table-scroll">
+    <table class="t-ids">
+      <thead><tr><th>Type</th><th>Format</th><th>How it is checked</th><th>Keywords that help</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td class="ty">AADHAAR</td><td>12 digits, often 4-4-4</td><td>Shape + official Verhoeff checksum. A backup rule catches numbers that fail the checksum when an Aadhaar keyword is nearby.</td><td>aadhaar, aadhar, adhaar, uid</td><td class="v">4991 1866 5246</td></tr>
+        <tr><td class="ty">PAN</td><td>5 letters, 4 digits, 1 letter</td><td>Shape. The 4th letter shows the holder type (P = person, C = company…). A valid holder letter scores higher.</td><td>pan, permanent account number</td><td class="v">ABCPK1234F</td></tr>
+        <tr><td class="ty">GSTIN</td><td>15 characters</td><td>State code 01–37, an embedded PAN, and a "Z" in position 14</td><td>gst, gstin, gst number</td><td class="v">27ABCPK1234F1Z5</td></tr>
+        <tr><td class="ty">VOTER_ID</td><td>3 letters, 7 digits</td><td>Shape of the EPIC number</td><td>voter, epic, election, matdata</td><td class="v">ABC1234567</td></tr>
+        <tr><td class="ty">PASSPORT</td><td>1 letter, 7 digits</td><td>Shape. It needs a keyword to count, because the shape alone is too common.</td><td>passport, passport number</td><td class="v">A1234567</td></tr>
+        <tr><td class="ty">PHONE</td><td>Indian mobile, with or without +91</td><td>Google's <code>phonenumbers</code> library, India region only</td><td>mobile, phone, call, whatsapp, mob</td><td class="v">+91-9123456789</td></tr>
+        <tr><td class="ty">EMAIL</td><td>name@domain</td><td>Shape + RFC 822 email check</td><td>email, mail</td><td class="v">priya.nair@example.com</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted">All example values are made up. Hinglish keywords like <code>aadhar</code>, <code>adhaar</code>, <code>mob</code> and <code>matdata</code> were added on purpose, because real Indian documents spell them that way.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Confidence scores</span>
+    <h2>How a keyword turns a weak match into a find</h2>
+    <p class="muted">Every candidate gets a score from 0 to 1, and only scores of <strong>0.40 or higher</strong> count. A keyword nearby adds <strong>+0.35</strong>. Strong evidence passes on its own. Weak evidence needs a keyword.</p>
+  </div>
+  <div class="scores" role="list">
+    <div class="srow" role="listitem"><span class="name">Aadhaar, checksum valid</span><div class="bar"><i class="base" style="width:100%"></i><i class="th"></i></div><span class="val">1.00</span></div>
+    <div class="srow" role="listitem"><span class="name">PAN with keyword "PAN"</span><div class="bar"><i class="base" style="width:50%"></i><i class="boost" style="left:50%;width:35%"></i><i class="th"></i></div><span class="val">0.85</span></div>
+    <div class="srow" role="listitem"><span class="name">Voter ID with keyword</span><div class="bar"><i class="base" style="width:40%"></i><i class="boost" style="left:40%;width:35%"></i><i class="th"></i></div><span class="val">0.75</span></div>
+    <div class="srow" role="listitem"><span class="name">Passport with keyword</span><div class="bar"><i class="base" style="width:10%"></i><i class="boost" style="left:10%;width:35%"></i><i class="th"></i></div><span class="val">0.45</span></div>
+    <div class="srow" role="listitem"><span class="name">Passport shape, no keyword</span><div class="bar"><i class="base" style="width:10%"></i><i class="th"></i></div><span class="val">0.10</span></div>
+    <div class="srow" role="listitem"><span class="name">Aadhaar, bad checksum + keyword</span><div class="bar"><i class="base" style="width:5%"></i><i class="boost" style="left:5%;width:35%"></i><i class="th"></i></div><span class="val">0.40</span></div>
+  </div>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--rule)"></i>Score from the pattern</span>
+    <span><i class="sw" style="background:var(--accent);opacity:.55"></i>Boost from a nearby keyword</span>
+    <span><i class="sw" style="background:var(--ink);width:3px"></i>0.40 cut-off</span>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Lane B · AI model</span>
+    <h2>Names and addresses</h2>
+    <p class="muted">Names and addresses have no fixed format, so rules can't find them. We use GLiNER, a small AI model built to find personal data. It runs on the laptop's CPU with no internet connection.</p>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Main path: GLiNER</h3>
+      <p>Model <code>urchade/gliner_multi_pii-v1</code>, trained on many languages, so it copes with Hinglish. We ask it for two labels, <em>person</em> and <em>address</em>, and keep answers it is at least 50% sure of. Long texts are split into 200-word windows that overlap by 30 words, so a name at the edge of one window is still read whole in the next.</p>
+      <div class="ex"><span class="a">Priya Nair</span> · <span class="a">Flat 4B, Shanti Apartments, MG Road, Bengaluru 560001</span></div>
+    </div>
+    <div class="card">
+      <h3>Backup path: spaCy + address rules</h3>
+      <p>If GLiNER ever fails to load, detection switches automatically to spaCy's name finder plus an Indian address pattern: house or flat number, locality words like Nagar, Road, Sector, Colony or Vihar, and a 6-digit PIN code. This was the plan's fallback for the 6:50 checkpoint. It wasn't needed, but it is built and tested.</p>
+      <div class="ex"><span class="a">Priya Nair</span> · <span class="a">12 Gandhi Nagar, Sector 5, Jaipur 302015</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">The merge step</span>
+    <h2>Four rules that put privacy first</h2>
+    <p class="muted">When two detectors find overlapping text, the gateway has to decide what to keep. Each rule is designed so that nothing found is ever left visible.</p>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>1 · The longer match wins</h3>
+      <p>A GSTIN contains a PAN inside it. The full GSTIN is kept, so the PAN isn't masked on its own.</p>
+      <div class="ex">GSTIN <span class="r">27ABCPK1234F1Z5</span> → one GSTIN, not GSTIN + PAN</div>
+    </div>
+    <div class="card">
+      <h3>2 · Partial overlaps grow</h3>
+      <p>If two finds only partly overlap, the span grows to cover both, instead of dropping one and leaving part of a number exposed.</p>
+    </div>
+    <div class="card">
+      <h3>3 · ID numbers beat names and addresses</h3>
+      <p>If the AI marks an address that contains a phone number, the phone is cut out and labeled as a phone. The rest stays an address.</p>
+      <div class="ex"><span class="a">12 MG Road Pune 411001 ph</span> <span class="r">9876543210</span></div>
+    </div>
+    <div class="card">
+      <h3>4 · Repeats are caught everywhere</h3>
+      <p>Once a value is found, every other exact repeat of it in the document is marked too. Whole words only, so "Ram" doesn't match inside "Ramesh".</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Results</span>
+    <h2>Three sample documents, 13 of 13 values found</h2>
+    <p class="muted">One document for each style the dataset covers. Each value must match exactly, and each test fails if anything is missed, extra or misplaced.</p>
+  </div>
+  <div class="table-scroll">
+    <table class="t-docs">
+      <thead><tr><th>Document</th><th>What was found</th><th>Count</th></tr></thead>
+      <tbody>
+        <tr><td class="layer">Hinglish chat</td><td>2 × PERSON, PAN, AADHAAR, PHONE</td><td class="v">5 / 5</td></tr>
+        <tr><td class="layer">Loan application</td><td>PERSON, full ADDRESS with PIN, EMAIL, GSTIN</td><td class="v">4 / 4</td></tr>
+        <tr><td class="layer">Support ticket</td><td>PERSON, VOTER_ID, PASSPORT, PHONE, full ADDRESS</td><td class="v">5 / 5</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted">Speed: loading the models takes about 12 seconds, once, when the gateway starts. After that, each document takes about 250–300 milliseconds on a laptop CPU.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Testing</span>
+    <h2>50 automated tests, all passing</h2>
+    <p class="muted">Task 7 of the plan asked for 2 valid and 1 invalid example per ID type. We wrote more. The made-up Aadhaar and GSTIN test numbers are generated with correct check digits.</p>
+  </div>
+  <div class="tests">
+    <div class="test"><span class="c">27</span><span class="f">test_detect_ids.py</span><span class="d">15 valid IDs found, 9 invalid ones rejected, registry, positions, plain numbers ignored</span></div>
+    <div class="test"><span class="c">9</span><span class="f">test_merge.py</span><span class="d">Every merge rule, including partial overlaps and repeats</span></div>
+    <div class="test"><span class="c">7</span><span class="f">test_detect_full.py</span><span class="d">3 sample documents, long text, backup path, empty input</span></div>
+    <div class="test"><span class="c">7</span><span class="f">Phase 1 tests</span><span class="d">Pipeline contract (3) and Gemini retry (4), still passing</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Tech stack used in Phase 2</span>
+    <h2>Tools and versions</h2>
+  </div>
+  <div class="table-scroll">
+    <table class="t-stack">
+      <thead><tr><th>Role</th><th>Technology</th><th>Version</th><th>What it does here</th></tr></thead>
+      <tbody>
+        <tr><td class="layer">ID rules engine</td><td>Microsoft Presidio Analyzer</td><td class="v">2.2.366</td><td>Runs the 7 recognizers, checks checksums and boosts scores when keywords are nearby</td></tr>
+        <tr><td class="layer">Language engine</td><td>spaCy + <code>en_core_web_lg</code></td><td class="v">3.8.18 / 3.8.0</td><td>Splits text into words so Presidio can spot keywords. Also the backup name finder.</td></tr>
+        <tr><td class="layer">Names &amp; addresses</td><td>GLiNER <code>gliner_multi_pii-v1</code></td><td class="v">0.2.30</td><td>The AI model that finds people and addresses, multilingual and offline</td></tr>
+        <tr><td class="layer">ML runtime</td><td>PyTorch + Transformers</td><td class="v">2.15.0 / 5.22.2</td><td>Runs GLiNER on the CPU</td></tr>
+        <tr><td class="layer">Phone numbers</td><td>Google <code>phonenumbers</code></td><td class="v">9.0.43</td><td>Recognizes valid Indian phone numbers in their many written forms</td></tr>
+        <tr><td class="layer">Custom rules</td><td>Python <code>re</code></td><td class="v">3.14</td><td>Tighter PAN patterns, the Aadhaar backup rule and the address pattern</td></tr>
+        <tr><td class="layer">Testing</td><td>pytest</td><td class="v">9.2.0</td><td>50 automated tests in about 30 seconds</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Engineering log</span>
+    <h2>What we found and changed</h2>
+  </div>
+  <div class="fixes">
+    <div class="fix">
+      <div class="prob"><span class="k">Found</span><p>One of Presidio's PAN patterns matched almost any 10-character word that has 4 digits in it, such as an order code.</p></div>
+      <div class="sol"><span class="k">Changed</span><p>Removed it and kept only the two real PAN shapes. Plain invoice numbers and codes are no longer flagged, and a test checks this.</p></div>
+    </div>
+    <div class="fix">
+      <div class="prob"><span class="k">Found</span><p>Presidio ignores any Aadhaar number that fails the checksum, so a typo or a made-up number next to the word "Aadhaar" would leak.</p></div>
+      <div class="sol"><span class="k">Changed</span><p>Added a backup rule. It only fires when an Aadhaar keyword is nearby, so random 12-digit numbers are still left alone.</p></div>
+    </div>
+    <div class="fix">
+      <div class="prob"><span class="k">Found</span><p>The plan assumed GSTIN needed a hand-written pattern.</p></div>
+      <div class="sol"><span class="k">Changed</span><p>Used Presidio's built-in GSTIN recognizer, which already checks the state code and structure. That meant less code and better accuracy.</p></div>
+    </div>
+    <div class="fix">
+      <div class="prob"><span class="k">Found</span><p>When the AI and the rules overlap, dropping either span could leave part of a value visible.</p></div>
+      <div class="sol"><span class="k">Changed</span><p>The merge rules grow spans instead of dropping them, and cut ID numbers out of addresses. Nothing found is ever left visible.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Code</span>
+    <h2>Files added in Phase 2</h2>
+  </div>
+<pre class="tree">gateway/
+├── detect.py         <span class="c"># detect(): rules + AI → merge → repeats</span>
+├── recognizers.py    <span class="c"># Presidio setup: 7 recognizers, keywords, scores</span>
+├── ner.py            <span class="c"># GLiNER for names/addresses + spaCy backup</span>
+└── merge.py          <span class="c"># the 4 merge rules</span>
+tests/
+├── test_detect_ids.py   <span class="c"># per-ID valid / invalid cases</span>
+├── test_merge.py        <span class="c"># merge rules</span>
+└── test_detect_full.py  <span class="c"># sample documents, backup path</span></pre>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Roadmap</span>
+    <h2>Where we are</h2>
+  </div>
+  <div class="road">
+    <div class="ph done"><span class="when">6:05–6:20 PM</span><h3>Phase 1 · Setup</h3><p>Environment, models, Gemini, shared contracts. Done.</p></div>
+    <div class="ph done"><span class="when">6:20–6:50 PM</span><h3>Phase 2 · Detection</h3><p>Everything in this report. Done, and the checkpoint passed without the fallback.</p></div>
+    <div class="ph"><span class="when">6:50–7:30 PM</span><h3>Phase 3 · Gateway core</h3><p>Replace each find with <code>&lt;TYPE_N&gt;</code>, block any leak, send to the AI, then put the real values back.</p></div>
+    <div class="ph"><span class="when">7:30–7:55 PM</span><h3>Phase 4 · Audit, API and evaluation</h3><p>Audit log, web API, and accuracy measured on the team's 50-document dataset.</p></div>
+    <div class="ph"><span class="when">7:55–8:05 PM</span><h3>Phase 5 · Verify and hand off</h3><p>Zero-leak check on all documents, a live Gemini run, and the <code>backend-v1</code> release tag.</p></div>
+  </div>
+</section>
+
+<footer>
+  Team: M1 + M2 (backend) · M3 (dataset, Streamlit UI). Phase 2 code is commit <code>e04389f</code>, in pull request #2 on the team repository.
+</footer>
+
+</div>

@@ -4,12 +4,13 @@ GeminiBackend: real calls. Only ever receives the already-built prompt, which
 contains sanitized text. The exact string sent is returned as outbound_payload
 so the leakage guard and the audit log can check what really left the box.
 
-MockBackend: offline backend for tests and the eval. STUB: "echo" only for now.
-Phase 3 adds: paraphrase, reorder, drop, fake (<PERSON_9>).
+MockBackend: offline backend for tests and the eval, with modes that mimic
+how real LLMs mangle placeholders: echo, paraphrase, reorder, drop, fake.
 """
 from __future__ import annotations
 
 import os
+import re
 import time
 
 from .contracts import LLMResponse
@@ -70,9 +71,9 @@ class GeminiBackend:
         for attempt in range(1, self.max_attempts + 1):
             try:
                 return self._client.models.generate_content(model=self.model, contents=prompt)
-            except Exception as e:  # noqa: BLE001 - filtered by status code below
-                code = getattr(e, "code", None)
-                if code not in RETRYABLE_STATUS or attempt == self.max_attempts:
+            except Exception as e:  # noqa: BLE001 - filtered below
+                retryable = getattr(e, "code", None) in RETRYABLE_STATUS or _is_network_error(e)
+                if not retryable or attempt == self.max_attempts:
                     raise
                 self._sleep(self.base_delay * 2 ** (attempt - 1))
 
@@ -88,19 +89,64 @@ class GeminiBackend:
         )
 
 
+_NETWORK_ERRORS = {"ReadError", "WriteError", "ConnectError", "RemoteProtocolError",
+                   "ReadTimeout", "ConnectTimeout", "WriteTimeout", "PoolTimeout"}
+
+
+def _is_network_error(e: Exception) -> bool:
+    """Dropped or timed-out connections (httpx / OS level) are worth a retry."""
+    return isinstance(e, (ConnectionError, TimeoutError)) or type(e).__name__ in _NETWORK_ERRORS
+
+
+_PH = re.compile(r"<([A-Z_]+?)_(\d+)>")
+_VARIANTS = ("{t}_{n}", "[{t}_{n}]", "<{tc} {n}>", "{{{t}_{n}}}")
+
+
 class MockBackend:
+    """Offline stand-in for an LLM, with the ways real LLMs mangle placeholders.
+
+    echo        returns the document unchanged
+    paraphrase  rewrites placeholders as PERSON_1, [PERSON_1], <Person 1>, {PERSON_1}
+    reorder     returns the sentences in reverse order
+    drop        removes every occurrence of the last placeholder
+    fake        appends a sentence with an invented <PERSON_9>
+    """
+
     name = "mock"
-    MODES = ("echo",)  # phase 3: + paraphrase, reorder, drop, fake
+    MODES = ("echo", "paraphrase", "reorder", "drop", "fake")
 
     def __init__(self, mode: str = "echo"):
         if mode not in self.MODES:
-            raise NotImplementedError(f"Mock mode {mode!r} arrives in phase 3")
+            raise ValueError(f"Unknown mock mode {mode!r}; use one of {self.MODES}")
         self.mode = mode
         self.model = f"mock-{mode}"
 
+    def _respond(self, doc: str) -> str:
+        if self.mode == "paraphrase":
+            i = iter(range(10**6))
+
+            def vary(m: re.Match) -> str:
+                t, n = m.group(1), m.group(2)
+                return _VARIANTS[next(i) % len(_VARIANTS)].format(
+                    t=t, n=n, tc=t.replace("_", " ").title())
+
+            return "Summary: " + _PH.sub(vary, doc)
+        if self.mode == "reorder":
+            parts = [p for p in re.split(r"(?<=[.!?\n])\s+", doc.strip()) if p]
+            return " ".join(reversed(parts))
+        if self.mode == "drop":
+            found = _PH.findall(doc)
+            if not found:
+                return doc
+            t, n = found[-1]
+            return re.sub(rf"\s*<{t}_{n}>", "", doc)
+        if self.mode == "fake":
+            return doc + " Please also notify <PERSON_9>."
+        return doc
+
     def generate(self, prompt: str) -> LLMResponse:
         t0 = time.perf_counter()
-        text = _extract_document(prompt)
+        text = self._respond(_extract_document(prompt))
         return LLMResponse(
             text=text,
             outbound_payload=prompt,
@@ -113,7 +159,13 @@ def _extract_document(prompt: str) -> str:
     """Pull the document body back out of the prompt template."""
     marker = '"""'
     if prompt.count(marker) >= 2:
-        return prompt.split(marker)[1].strip("\n")
+        body = prompt.split(marker)[1]
+        # The template adds exactly one newline on each side; keep the document's own.
+        if body.startswith("\n"):
+            body = body[1:]
+        if body.endswith("\n"):
+            body = body[:-1]
+        return body
     return prompt
 
 

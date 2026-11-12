@@ -43,7 +43,7 @@ CONTEXT = {
     "AADHAAR": ["aadhaar", "aadhar", "adhaar", "adhar", "uid", "uidai"],
     "PAN": ["pan", "permanent account number"],
     "GSTIN": ["gstin", "gst", "goods and services tax", "gst number", "gst registration"],
-    "VOTER_ID": ["voter", "epic", "election", "elector photo identity card", "matdata"],
+    "VOTER_ID": ["voter", "epic", "election", "elector", "elector photo identity card", "matdata"],
     "PASSPORT": ["passport", "indian passport", "passport number"],
     "PHONE": ["phone", "mobile", "mob", "contact", "call", "whatsapp", "ph", "tel", "number"],
     "EMAIL": ["email", "e-mail", "mail"],
