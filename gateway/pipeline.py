@@ -24,12 +24,14 @@ def process(
     task: str = DEFAULT_TASK,
     audit: bool = False,
     audit_db: str | None = None,
+    detector=None,
 ) -> ProcessResult:
+    """`detector` replaces detect() for tests and failure drills only."""
     backend = backend or MockBackend()
     request_id = uuid.uuid4().hex[:12]
 
     t0 = time.perf_counter()
-    entities = detect(text)
+    entities = (detector or detect)(text)
     masked = mask(text, entities)
     prompt = build_prompt(masked.masked_text, task)
     leak = check_outbound(prompt, masked.mapping)
@@ -54,7 +56,15 @@ def process(
             blocked=True,
         )
     else:
-        resp = backend.generate(prompt)
+        try:
+            resp = backend.generate(prompt)
+        except Exception as e:
+            if audit:  # record the failure (payload already passed the leak guard)
+                from .audit import log_error
+
+                log_error(request_id, backend.name, getattr(backend, "model", backend.name),
+                          masked.entities, prompt, e, pre_ms, audit_db)
+            raise
         t1 = time.perf_counter()
         restored = reinsert(resp.text, masked.mapping)
         post_ms = (time.perf_counter() - t1) * 1000

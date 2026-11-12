@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PS-02 Privacy Gateway</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#f5f6f9;--surface:#fff;--ink:#131924;--muted:#5b6575;--line:#dde2ea;
+  --accent:#2647d6;--accent-soft:#e7ecfd;
+  --ok:#157f3b;--ok-soft:#e1f4e7;--warn:#9a5b00;--warn-soft:#fdf0d9;--bad:#b42318;--bad-soft:#fde7e5;
+  --chip:#d9f2ea;--chip-ink:#0b5a43;
+  --PERSON:#f9d3ea;--ADDRESS:#e6d8fb;--AADHAAR:#ffe0b8;--PAN:#d4e4ff;--GSTIN:#c9f0ea;
+  --VOTER_ID:#dcdcff;--PASSPORT:#ead9cc;--PHONE:#d6f2d0;--EMAIL:#cdeff7;
+  --f-d:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;--f-b:Inter,"Segoe UI",system-ui,sans-serif;--f-m:"JetBrains Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f131a;--surface:#171c25;--ink:#e8ecf3;--muted:#9aa4b5;--line:#2a3140;--accent:#8ea4ff;--accent-soft:#1d2645;
+  --ok:#5fd38a;--ok-soft:#12301f;--warn:#f2b65a;--warn-soft:#36280f;--bad:#ff8a80;--bad-soft:#3a1714;
+  --chip:#12392e;--chip-ink:#8fe3c6;
+  --PERSON:#5a1d47;--ADDRESS:#3d2a63;--AADHAAR:#5c3a0d;--PAN:#1d335c;--GSTIN:#124a43;
+  --VOTER_ID:#2c2c63;--PASSPORT:#4a3426;--PHONE:#1e4a1a;--EMAIL:#123f4a;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-b)}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:#fff;font:800 15px var(--f-d)}
+h1{font:800 1.2rem var(--f-d);margin:0}
+.sub{font-size:.8rem;color:var(--muted)}
+.tabs{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:10px}
+.tabs button{border:0;background:none;padding:7px 14px;border-radius:7px;font:600 .88rem var(--f-b);color:var(--muted);cursor:pointer}
+.tabs button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px #0002}
+.pill{display:inline-flex;gap:6px;align-items:center;font-size:.78rem;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--ok-soft);color:var(--ok)}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}.pill.bad{background:var(--bad-soft);color:var(--bad)}.pill.idle{background:var(--accent-soft);color:var(--accent)}
+main{max-width:1400px;margin:0 auto;padding:20px 24px 60px;display:grid;gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.card h2{font:700 .78rem var(--f-m);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 10px}
+.input-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:18px}
+@media(max-width:900px){.input-grid,.three{grid-template-columns:1fr!important}}
+textarea{width:100%;min-height:150px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:12px;font:14px/1.6 var(--f-b);background:var(--bg);color:var(--ink)}
+label{display:grid;gap:4px;font-size:.8rem;font-weight:600;color:var(--muted)}
+select{padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:14px var(--f-b)}
+.opts{display:grid;gap:12px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:0;background:var(--accent);color:#fff;font:700 .95rem var(--f-b);padding:11px 18px;border-radius:9px;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:wait}
+.btn.ghost{background:var(--accent-soft);color:var(--accent);font-size:.82rem;padding:7px 12px}
+.drill{font-size:.78rem;color:var(--muted)}
+.steps{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+@media(max-width:700px){.steps{grid-template-columns:repeat(3,1fr)}}
+.step{border:1px solid var(--line);border-radius:10px;padding:10px;display:grid;gap:2px;background:var(--surface);transition:.25s}
+.step b{font:700 .9rem var(--f-d)}.step span{font-size:.72rem;color:var(--muted)}
+.step.boundary{border-style:dashed;border-width:2px;border-color:var(--accent)}
+.step.run{border-color:var(--accent);background:var(--accent-soft)}
+.step.done{border-color:var(--ok);background:var(--ok-soft)}
+.step.fail{border-color:var(--bad);background:var(--bad-soft)}
+.step.skip{opacity:.4}
+.banner{border-radius:10px;padding:12px 16px;font-weight:600;display:none}
+.banner.ok{display:block;background:var(--ok-soft);color:var(--ok)}
+.banner.warn{display:block;background:var(--warn-soft);color:var(--warn)}
+.banner.bad{display:block;background:var(--bad-soft);color:var(--bad)}
+.banner small{display:block;font-weight:500;opacity:.9;margin-top:2px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.9;font-size:.95rem}
+.hl{padding:1px 3px;border-radius:4px}
+.hl i{font:600 .6rem var(--f-m);font-style:normal;opacity:.75;margin-left:3px;vertical-align:1px}
+.chip{background:var(--chip);color:var(--chip-ink);font:600 .8rem var(--f-m);padding:1px 6px;border-radius:5px;white-space:nowrap}
+.chip.unk{background:var(--bad-soft);color:var(--bad)}
+.restored{border-bottom:2px solid var(--ok)}
+.empty{color:var(--muted);font-style:italic}
+table{width:100%;border-collapse:collapse;font-size:.86rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+td.m{font-family:var(--f-m);font-size:.8rem}
+.tblwrap{overflow-x:auto}
+.bar{height:7px;border-radius:4px;background:var(--line);overflow:hidden;width:90px}.bar i{display:block;height:100%;background:var(--accent)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+.counters{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.counter{border-radius:10px;padding:10px 12px;background:var(--bg)}
+.counter b{font:800 1.6rem var(--f-d);display:block}
+.counter.g b{color:var(--ok)}.counter.a b{color:var(--warn)}.counter.r b{color:var(--bad)}
+.counter span{font-size:.75rem;color:var(--muted)}
+.counter div{font:.72rem var(--f-m);color:var(--muted);overflow-wrap:anywhere}
+.timing{display:grid;gap:8px;font-size:.85rem}
+.tbar{height:12px;border-radius:6px;background:var(--accent)}.tbar.llm{background:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:700px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.tile b{font:800 2rem var(--f-d);display:block}
+.tile.ok b{color:var(--ok)}.tile.flagged b{color:var(--warn)}.tile.blocked b,.tile.error b{color:var(--bad)}
+.tile span{font-size:.8rem;color:var(--muted)}
+.note{font-size:.82rem;color:var(--muted)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo">PG</div><div><h1>PS-02 Privacy Gateway</h1><div class="sub">Masks Indian personal data before it reaches the AI, then restores it in the answer</div></div></div>
+  <div class="tabs" role="tablist"><button class="on" data-tab="run">Live demo</button><button data-tab="audit">Audit log</button></div>
+  <span class="pill idle" id="health">Loading models…</span>
+</header>
+
+<main id="tab-run">
+  <div class="input-grid">
+    <div class="card">
+      <h2>1 · Customer document</h2>
+      <div class="row" style="margin-bottom:10px" id="samples"></div>
+      <textarea id="text" aria-label="Document text"></textarea>
+    </div>
+    <div class="card opts">
+      <h2>2 · Settings</h2>
+      <label>AI backend<select id="backend"><option value="mock">Mock AI (offline, instant)</option><option value="gemini">Google Gemini (live)</option></select></label>
+      <label>Mock AI behaviour<select id="mode">
+        <option value="echo">Echo: returns text unchanged</option>
+        <option value="paraphrase">Paraphrase: mangles placeholders</option>
+        <option value="reorder">Reorder: shuffles sentences</option>
+        <option value="drop">Drop: deletes a placeholder</option>
+        <option value="fake">Fake: invents &lt;PERSON_9&gt;</option></select></label>
+      <label>Failure drill<select id="simulate">
+        <option value="none">None: normal run</option>
+        <option value="detector_miss">Detector misses a repeated value</option>
+        <option value="llm_outage">AI provider is down</option></select></label>
+      <p class="drill">Drills inject a fault on purpose to show how the gateway reacts.</p>
+      <button class="btn" id="run">Run gateway</button>
+    </div>
+  </div>
+
+  <div class="steps" id="steps">
+    <div class="step" data-s="0"><b>Detect</b><span>Presidio + GLiNER</span></div>
+    <div class="step" data-s="1"><b>Mask</b><span>&lt;TYPE_N&gt; placeholders</span></div>
+    <div class="step" data-s="2"><b>Leak guard</b><span>Scan outgoing text</span></div>
+    <div class="step boundary" data-s="3"><b>Send to AI</b><span>Only masked text leaves</span></div>
+    <div class="step" data-s="4"><b>Reinsert</b><span>Restore real values</span></div>
+    <div class="step" data-s="5"><b>Audit</b><span>Log, no raw values</span></div>
+  </div>
+
+  <div class="banner" id="banner"></div>
+
+  <div class="three">
+    <div class="card"><h2>Detected on the laptop</h2><div class="text" id="detected"><span class="empty">Run the gateway to see detected personal data.</span></div></div>
+    <div class="card" style="border-color:var(--accent)"><h2>Exactly what the AI receives</h2><div class="text" id="sent"><span class="empty">Masked text appears here.</span></div></div>
+    <div class="card"><h2>Final answer for the user</h2><div class="text" id="final"><span class="empty">Restored answer appears here.</span></div></div>
+  </div>
+
+  <div class="two">
+    <div class="card"><h2>Entities found</h2><div class="tblwrap"><table><thead><tr><th>Type</th><th>Value</th><th>Placeholder</th><th>Confidence</th><th>Detector</th></tr></thead><tbody id="ents"><tr><td colspan="5" class="empty">None yet</td></tr></tbody></table></div></div>
+    <div class="card" style="display:grid;gap:14px;align-content:start">
+      <div><h2>Reinsertion</h2>
+        <div class="counters">
+          <div class="counter g"><b id="c-res">0</b><span>Restored</span><div id="l-res"></div></div>
+          <div class="counter a"><b id="c-drop">0</b><span>Dropped by AI</span><div id="l-drop"></div></div>
+          <div class="counter r"><b id="c-unk">0</b><span>Invented by AI</span><div id="l-unk"></div></div>
+        </div></div>
+      <div><h2>Timing</h2><div class="timing" id="timing"><span class="note">Gateway time vs AI time appears here.</span></div></div>
+    </div>
+  </div>
+</main>
+
+<main id="tab-audit" hidden>
+  <div class="tiles" id="tiles"></div>
+  <div class="card"><h2>Recent requests</h2><p class="note" style="margin:0 0 10px">The audit log never stores real values, the original text or the placeholder mapping. Blocked requests store an empty payload; errors store only the error type.</p>
+    <div class="tblwrap"><table><thead><tr><th>Time (UTC)</th><th>Request</th><th>Status</th><th>Backend</th><th>Entities</th><th>Leaked types</th><th>Dropped</th><th>Invented</th><th>Gateway ms</th><th>AI ms</th><th>Error</th></tr></thead><tbody id="rows"></tbody></table></div>
+  </div>
+  <div class="card"><h2>Masked payload of the latest request</h2><div class="text" id="lastpayload"></div></div>
+</main>
+
+<script>
+const SAMPLES = {
+  "Hinglish": "Mera naam Rahul Sharma hai. PAN ABCDE1234F, Aadhaar 2345 6789 0123. Rahul Sharma ka mobile 98765 43210 hai. Voter ID ABC1234567.",
+  "Loan": "Loan applicant Priya Nair, residing at Flat 4B, Shanti Apartments, MG Road, Bengaluru 560001. Email priya.nair@example.com, GSTIN 27ABCPK1234F1Z5. Priya Nair requests a top-up of Rs 5 lakh.",
+  "KYC": "Beneficial Owner: Diya Krishnan\nCommunication Address: House No. 401, Neelgiri Bhavan, Lakefront Avenue, Saket, New Delhi, Delhi - 110017\nIndividual PAN: QJCPK9652W\nAadhaar Ref: 5652 7833 7667\nPassport OVD: H2580196\nEPIC / Voter ID: TND7925936",
+  "Support": "Support ticket: customer Mohammed Iqbal (voter ID ABC1234567, passport no A1234567) called from +91-9123456789 about his address 12 Gandhi Nagar, Sector 5, Jaipur 302015.",
+  "Hard case": "Applicant Sunita Rao called today. Sunita said the claim is still pending. Travel document K8765432 attached.",
+  "No PII": "The app crashes when I open the statements tab after the latest update."
+};
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const PH = /&lt;([A-Z_]+?)_(\d+)&gt;/g;
+
+for (const k of Object.keys(SAMPLES)) {
+  const b = document.createElement("button"); b.className = "btn ghost"; b.textContent = k;
+  b.onclick = () => { $("text").value = SAMPLES[k]; }; $("samples").appendChild(b);
+}
+$("text").value = SAMPLES["Hinglish"];
+
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
+  $("tab-run").hidden = b.dataset.tab !== "run"; $("tab-audit").hidden = b.dataset.tab !== "audit";
+  if (b.dataset.tab === "audit") loadAudit();
+});
+$("backend").onchange = () => { $("mode").disabled = $("backend").value !== "mock"; };
+
+async function health() {
+  try { const h = await (await fetch("/health")).json();
+    $("health").className = "pill"; $("health").textContent = "Ready · detection " + h.ner + " (offline)";
+  } catch { $("health").className = "pill bad"; $("health").textContent = "Server not reachable"; }
+}
+health();
+
+const steps = () => [...document.querySelectorAll(".step")];
+function setSteps(states) { steps().forEach((s, i) => { s.className = "step" + (i === 3 ? " boundary" : "") + (states[i] ? " " + states[i] : ""); }); }
+function banner(kind, title, detail) { const b = $("banner"); b.className = "banner " + kind; b.innerHTML = esc(title) + (detail ? "<small>" + esc(detail) + "</small>" : ""); }
+
+function highlight(text, ents) {
+  let out = "", pos = 0;
+  for (const e of [...ents].sort((a, b) => a.start - b.start)) {
+    out += esc(text.slice(pos, e.start));
+    out += `<span class="hl" style="background:var(--${e.type})">${esc(text.slice(e.start, e.end))}<i>${e.type}</i></span>`;
+    pos = e.end;
+  }
+  return out + esc(text.slice(pos));
+}
+const chips = (s, known) => esc(s).replace(PH, (m, t, n) => `<span class="chip${known && !known.has(`<${t}_${n}>`) ? " unk" : ""}">${m}</span>`);
+
+function placeholderFor(r, e) {
+  // the mask numbers per type in order of first appearance of each distinct value
+  const norm = v => v.replace(/[\s\-–—]+/g, "").toLowerCase();
+  const seen = {}, count = {};
+  for (const x of [...r.entities].sort((a, b) => a.start - b.start)) {
+    const k = x.type + "|" + norm(x.text);
+    if (!(k in seen)) { count[x.type] = (count[x.type] || 0) + 1; seen[k] = `<${x.type}_${count[x.type]}>`; }
+  }
+  return seen[e.type + "|" + norm(e.text)];
+}
+
+function render(r) {
+  $("detected").innerHTML = r.entities.length ? highlight(r.original_text, r.entities) : esc(r.original_text) + '<br><span class="empty">No personal data found.</span>';
+  const known = new Set(r.entities.map(e => placeholderFor(r, e)));
+  $("sent").innerHTML = r.blocked ? '<span class="empty">Nothing was sent. The request was blocked.</span>' : chips(r.sanitized_text, known);
+  let fin = esc(r.final_text || "");
+  const vals = [...new Set(r.entities.map(e => e.text))].sort((a, b) => b.length - a.length);
+  for (const v of vals) fin = fin.split(esc(v)).join(`<span class="restored">${esc(v)}</span>`);
+  fin = fin.replace(PH, m => `<span class="chip unk">${m}</span>`);
+  $("final").innerHTML = r.blocked ? '<span class="empty">No answer: the request never reached the AI.</span>' : fin;
+
+  $("ents").innerHTML = r.entities.length ? r.entities.map(e => `<tr><td><span class="hl" style="background:var(--${e.type})">${e.type}</span></td><td>${esc(e.text)}</td><td class="m">${esc(placeholderFor(r, e))}</td><td><div class="bar"><i style="width:${Math.round(e.score * 100)}%"></i></div></td><td class="m">${e.source}</td></tr>`).join("")
+    : '<tr><td colspan="5" class="empty">No personal data detected</td></tr>';
+
+  const ri = r.reinsertion;
+  $("c-res").textContent = ri.restored.length; $("l-res").textContent = ri.restored.join(" ");
+  $("c-drop").textContent = ri.dropped.length; $("l-drop").textContent = ri.dropped.join(" ");
+  $("c-unk").textContent = ri.unknown.length; $("l-unk").textContent = ri.unknown.join(" ");
+  const max = Math.max(r.gateway_ms, r.llm_ms, 1);
+  $("timing").innerHTML = `<div>Gateway (detect + mask + guard + reinsert): <b>${r.gateway_ms.toFixed(0)} ms</b><div class="tbar" style="width:${Math.max(2, 100 * r.gateway_ms / max)}%"></div></div>
+    <div>AI call (${esc(r.model)}): <b>${r.llm_ms >= 1000 ? (r.llm_ms / 1000).toFixed(1) + " s" : r.llm_ms.toFixed(1) + " ms"}</b><div class="tbar llm" style="width:${Math.max(2, 100 * r.llm_ms / max)}%"></div></div>`;
+}
+
+$("run").onclick = async () => {
+  const text = $("text").value.trim(); if (!text) return;
+  $("run").disabled = true; $("run").textContent = "Running…";
+  setSteps(["run"]); banner("", "", "");
+  let i = 0; const tick = setInterval(() => { i = Math.min(i + 1, 3); setSteps([...Array(i).fill("done"), "run"]); }, 350);
+  try {
+    const res = await fetch("/process", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, backend: $("backend").value, mock_mode: $("mode").value, simulate: $("simulate").value }) });
+    clearInterval(tick);
+    const r = await res.json();
+    if (!res.ok) {
+      setSteps(["done", "done", "done", "fail", "skip", "done"]);
+      banner("bad", "The AI could not be reached (" + (r.detail || res.status).toString().replace("LLM call failed: ", "") + ").",
+        "Your data was not exposed: only masked text had been prepared, and it passed the leak guard. The failure is recorded in the audit log.");
+      return;
+    }
+    render(r);
+    const n = r.entities.length;
+    if (r.blocked) {
+      setSteps(["done", "done", "fail", "skip", "skip", "done"]);
+      banner("bad", "Request blocked. A real " + r.leak_check.leaked_types.join(", ") + " value was still in the outgoing text.",
+        "Nothing was sent to the AI. Only the type is reported, never the value. Recorded in the audit log as 'blocked'.");
+    } else if (r.status === "flagged") {
+      setSteps(["done", "done", "done", "done", "done", "done"]);
+      const parts = [];
+      if (r.reinsertion.dropped.length) parts.push("The AI left out " + r.reinsertion.dropped.join(", ") + ", so that value is missing from the answer.");
+      if (r.reinsertion.unknown.length) parts.push("The AI invented " + r.reinsertion.unknown.join(", ") + ". It was left as-is and never filled with a guess.");
+      banner("warn", "Answer delivered, with warnings.", parts.join(" "));
+    } else {
+      setSteps(["done", "done", "done", "done", "done", "done"]);
+      banner("ok", n ? `${n} personal values masked. 0 leaks. All placeholders restored.` : "No personal data found. The text was sent as is.",
+        "Leak check passed on the exact text sent to " + r.model + ".");
+    }
+  } catch (e) {
+    clearInterval(tick); setSteps(["fail"]); banner("bad", "Could not reach the gateway server.", String(e));
+  } finally { $("run").disabled = false; $("run").textContent = "Run gateway"; }
+};
+
+async function loadAudit() {
+  const [s, rows] = await Promise.all([fetch("/audit/summary").then(r => r.json()), fetch("/audit?limit=50").then(r => r.json())]);
+  const label = { ok: "OK: sent and fully restored", flagged: "Flagged: AI dropped or invented", blocked: "Blocked: leak caught, nothing sent", error: "Error: AI call failed" };
+  $("tiles").innerHTML = Object.entries(s.by_status).map(([k, v]) => `<div class="tile ${k}"><b>${v}</b><span>${label[k]}</span></div>`).join("");
+  const cls = { ok: "", flagged: "warn", blocked: "bad", error: "bad" };
+  $("rows").innerHTML = rows.map(r => `<tr><td class="m">${r.ts_utc.replace("T", " ").slice(0, 19)}</td><td class="m">${r.request_id}</td><td><span class="pill ${cls[r.status]}">${r.status}</span></td><td>${esc(r.model)}</td><td class="m">${Object.entries(r.entity_counts).map(([k, v]) => k + "×" + v).join(" ") || "none"}</td><td class="m">${r.leaked_types.join(", ") || "none"}</td><td>${r.dropped}</td><td>${r.unknown}</td><td>${r.gateway_ms.toFixed(0)}</td><td>${r.llm_ms.toFixed(0)}</td><td class="m">${esc(r.error || "")}</td></tr>`).join("")
+    || '<tr><td colspan="11" class="empty">No requests yet. Run the gateway first.</td></tr>';
+  $("lastpayload").innerHTML = rows.length ? (rows[0].sanitized_payload ? chips(rows[0].sanitized_payload) : '<span class="empty">Empty: this request was blocked or had no payload.</span>') : "";
+}
+</script>
+</body>
+</html>
