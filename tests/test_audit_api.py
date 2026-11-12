@@ -8,8 +8,8 @@ from gateway.audit import recent
 from gateway.backends import MockBackend
 from gateway.pipeline import process
 
-SAMPLE = "Mera naam Rahul Sharma hai. PAN ABCDE1234F, mobile 98765 43210."
-RAW = ["Rahul Sharma", "ABCDE1234F", "98765 43210", "98765"]
+SAMPLE = "Mera naam Rahul Sharma hai. PAN BNZPM2501F, mobile 98765 43210."
+RAW = ["Rahul Sharma", "BNZPM2501F", "98765 43210", "98765"]
 
 
 def test_one_row_per_request_without_raw_values(tmp_path):

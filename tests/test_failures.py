@@ -53,7 +53,7 @@ def test_summary_counts(tmp_path):
         process(DOC, Down("echo"), audit=True, audit_db=db)
     s = summary(db)
     assert s["total_requests"] == 4
-    assert s["by_status"] == {"ok": 1, "flagged": 2, "blocked": 0, "error": 1}
+    assert s["by_status"] == {"ok": 1, "flagged": 2, "rejected": 0, "blocked": 0, "error": 1}
     assert s["placeholders_dropped_by_llm"] == 1 and s["placeholders_invented_by_llm"] == 1
     assert s["llm_errors_by_type"] == {"ConnectionError": 1}
 

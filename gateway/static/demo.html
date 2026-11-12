@@ -49,8 +49,10 @@ select{padding:8px 10px;border-radius:8px;border:1px solid var(--line);backgroun
 .btn:disabled{opacity:.5;cursor:wait}
 .btn.ghost{background:var(--accent-soft);color:var(--accent);font-size:.82rem;padding:7px 12px}
 .drill{font-size:.78rem;color:var(--muted)}
-.steps{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
-@media(max-width:700px){.steps{grid-template-columns:repeat(3,1fr)}}
+.steps{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+@media(max-width:900px){.steps{grid-template-columns:repeat(4,1fr)}}
+.hl.invalid{outline:2px solid var(--bad);outline-offset:1px}
+.fixlist{margin:8px 0 0;padding-left:1.2em;font-weight:500;display:grid;gap:4px}
 .step{border:1px solid var(--line);border-radius:10px;padding:10px;display:grid;gap:2px;background:var(--surface);transition:.25s}
 .step b{font:700 .9rem var(--f-d)}.step span{font-size:.72rem;color:var(--muted)}
 .step.boundary{border-style:dashed;border-width:2px;border-color:var(--accent)}
@@ -87,7 +89,8 @@ td.m{font-family:var(--f-m);font-size:.8rem}
 .counter div{font:.72rem var(--f-m);color:var(--muted);overflow-wrap:anywhere}
 .timing{display:grid;gap:8px;font-size:.85rem}
 .tbar{height:12px;border-radius:6px;background:var(--accent)}.tbar.llm{background:var(--muted)}
-.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.tile.rejected b{color:var(--warn)}
 @media(max-width:700px){.tiles{grid-template-columns:repeat(2,1fr)}}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
 .tile b{font:800 2rem var(--f-d);display:block}
@@ -131,11 +134,12 @@ td.m{font-family:var(--f-m);font-size:.8rem}
 
   <div class="steps" id="steps">
     <div class="step" data-s="0"><b>Detect</b><span>Presidio + GLiNER</span></div>
-    <div class="step" data-s="1"><b>Mask</b><span>&lt;TYPE_N&gt; placeholders</span></div>
-    <div class="step" data-s="2"><b>Leak guard</b><span>Scan outgoing text</span></div>
-    <div class="step boundary" data-s="3"><b>Send to AI</b><span>Only masked text leaves</span></div>
-    <div class="step" data-s="4"><b>Reinsert</b><span>Restore real values</span></div>
-    <div class="step" data-s="5"><b>Audit</b><span>Log, no raw values</span></div>
+    <div class="step" data-s="1"><b>Validate IDs</b><span>Format + check digit</span></div>
+    <div class="step" data-s="2"><b>Mask</b><span>&lt;TYPE_N&gt; placeholders</span></div>
+    <div class="step" data-s="3"><b>Leak guard</b><span>Scan outgoing text</span></div>
+    <div class="step boundary" data-s="4"><b>Send to AI</b><span>Only masked text leaves</span></div>
+    <div class="step" data-s="5"><b>Reinsert</b><span>Restore real values</span></div>
+    <div class="step" data-s="6"><b>Audit</b><span>Log, no raw values</span></div>
   </div>
 
   <div class="banner" id="banner"></div>
@@ -170,7 +174,8 @@ td.m{font-family:var(--f-m);font-size:.8rem}
 
 <script>
 const SAMPLES = {
-  "Hinglish": "Mera naam Rahul Sharma hai. PAN ABCDE1234F, Aadhaar 2345 6789 0123. Rahul Sharma ka mobile 98765 43210 hai. Voter ID ABC1234567.",
+  "Hinglish": "Mera naam Rahul Sharma hai. PAN BNZPM2501F, Aadhaar 4991 1866 5246. Rahul Sharma ka mobile 98765 43210 hai. Voter ID ABC1234567.",
+  "Wrong IDs": "Mera naam Rahul Sharma hai. Aadhaar: 1234 5678 901, PAN ABCDE1234F, GSTIN 99ABCPK1234F1Z5, passport no 12345678, mobile 12345 67890.",
   "Loan": "Loan applicant Priya Nair, residing at Flat 4B, Shanti Apartments, MG Road, Bengaluru 560001. Email priya.nair@example.com, GSTIN 27ABCPK1234F1Z5. Priya Nair requests a top-up of Rs 5 lakh.",
   "KYC": "Beneficial Owner: Diya Krishnan\nCommunication Address: House No. 401, Neelgiri Bhavan, Lakefront Avenue, Saket, New Delhi, Delhi - 110017\nIndividual PAN: QJCPK9652W\nAadhaar Ref: 5652 7833 7667\nPassport OVD: H2580196\nEPIC / Voter ID: TND7925936",
   "Support": "Support ticket: customer Mohammed Iqbal (voter ID ABC1234567, passport no A1234567) called from +91-9123456789 about his address 12 Gandhi Nagar, Sector 5, Jaipur 302015.",
@@ -202,14 +207,15 @@ async function health() {
 health();
 
 const steps = () => [...document.querySelectorAll(".step")];
-function setSteps(states) { steps().forEach((s, i) => { s.className = "step" + (i === 3 ? " boundary" : "") + (states[i] ? " " + states[i] : ""); }); }
+function setSteps(states) { steps().forEach((s, i) => { s.className = "step" + (i === 4 ? " boundary" : "") + (states[i] ? " " + states[i] : ""); }); }
 function banner(kind, title, detail) { const b = $("banner"); b.className = "banner " + kind; b.innerHTML = esc(title) + (detail ? "<small>" + esc(detail) + "</small>" : ""); }
 
-function highlight(text, ents) {
+function highlight(text, ents, invalid = []) {
   let out = "", pos = 0;
   for (const e of [...ents].sort((a, b) => a.start - b.start)) {
     out += esc(text.slice(pos, e.start));
-    out += `<span class="hl" style="background:var(--${e.type})">${esc(text.slice(e.start, e.end))}<i>${e.type}</i></span>`;
+    const bad = invalid.some(v => v.start < e.end && e.start < v.end);
+    out += `<span class="hl${bad ? " invalid" : ""}" style="background:var(--${e.type})">${esc(text.slice(e.start, e.end))}<i>${e.type}${bad ? " ✗ INVALID" : ""}</i></span>`;
     pos = e.end;
   }
   return out + esc(text.slice(pos));
@@ -228,14 +234,15 @@ function placeholderFor(r, e) {
 }
 
 function render(r) {
-  $("detected").innerHTML = r.entities.length ? highlight(r.original_text, r.entities) : esc(r.original_text) + '<br><span class="empty">No personal data found.</span>';
+  $("detected").innerHTML = r.entities.length ? highlight(r.original_text, r.entities, r.invalid_ids || []) : esc(r.original_text) + '<br><span class="empty">No personal data found.</span>';
   const known = new Set(r.entities.map(e => placeholderFor(r, e)));
-  $("sent").innerHTML = r.blocked ? '<span class="empty">Nothing was sent. The request was blocked.</span>' : chips(r.sanitized_text, known);
+  $("sent").innerHTML = r.needs_correction ? '<span class="empty">Nothing was sent. Please correct the invalid IDs first.</span>'
+    : r.blocked ? '<span class="empty">Nothing was sent. The request was blocked.</span>' : chips(r.sanitized_text, known);
   let fin = esc(r.final_text || "");
   const vals = [...new Set(r.entities.map(e => e.text))].sort((a, b) => b.length - a.length);
   for (const v of vals) fin = fin.split(esc(v)).join(`<span class="restored">${esc(v)}</span>`);
   fin = fin.replace(PH, m => `<span class="chip unk">${m}</span>`);
-  $("final").innerHTML = r.blocked ? '<span class="empty">No answer: the request never reached the AI.</span>' : fin;
+  $("final").innerHTML = (r.blocked || r.needs_correction) ? '<span class="empty">No answer: the request never reached the AI.</span>' : fin;
 
   $("ents").innerHTML = r.entities.length ? r.entities.map(e => `<tr><td><span class="hl" style="background:var(--${e.type})">${e.type}</span></td><td>${esc(e.text)}</td><td class="m">${esc(placeholderFor(r, e))}</td><td><div class="bar"><i style="width:${Math.round(e.score * 100)}%"></i></div></td><td class="m">${e.source}</td></tr>`).join("")
     : '<tr><td colspan="5" class="empty">No personal data detected</td></tr>';
@@ -260,25 +267,30 @@ $("run").onclick = async () => {
     clearInterval(tick);
     const r = await res.json();
     if (!res.ok) {
-      setSteps(["done", "done", "done", "fail", "skip", "done"]);
+      setSteps(["done", "done", "done", "done", "fail", "skip", "done"]);
       banner("bad", "The AI could not be reached (" + (r.detail || res.status).toString().replace("LLM call failed: ", "") + ").",
         "Your data was not exposed: only masked text had been prepared, and it passed the leak guard. The failure is recorded in the audit log.");
       return;
     }
     render(r);
     const n = r.entities.length;
-    if (r.blocked) {
-      setSteps(["done", "done", "fail", "skip", "skip", "done"]);
+    if (r.needs_correction) {
+      setSteps(["done", "fail", "skip", "skip", "skip", "skip", "done"]);
+      const b = $("banner"); b.className = "banner bad";
+      b.innerHTML = `Please re-enter ${r.invalid_ids.length === 1 ? "this value" : "these " + r.invalid_ids.length + " values"}. Nothing was sent to the AI.`
+        + `<ul class="fixlist">${r.invalid_ids.map(v => `<li>${esc(v.message)}</li>`).join("")}</ul>`;
+    } else if (r.blocked) {
+      setSteps(["done", "done", "done", "fail", "skip", "skip", "done"]);
       banner("bad", "Request blocked. A real " + r.leak_check.leaked_types.join(", ") + " value was still in the outgoing text.",
         "Nothing was sent to the AI. Only the type is reported, never the value. Recorded in the audit log as 'blocked'.");
     } else if (r.status === "flagged") {
-      setSteps(["done", "done", "done", "done", "done", "done"]);
+      setSteps(["done", "done", "done", "done", "done", "done", "done"]);
       const parts = [];
       if (r.reinsertion.dropped.length) parts.push("The AI left out " + r.reinsertion.dropped.join(", ") + ", so that value is missing from the answer.");
       if (r.reinsertion.unknown.length) parts.push("The AI invented " + r.reinsertion.unknown.join(", ") + ". It was left as-is and never filled with a guess.");
       banner("warn", "Answer delivered, with warnings.", parts.join(" "));
     } else {
-      setSteps(["done", "done", "done", "done", "done", "done"]);
+      setSteps(["done", "done", "done", "done", "done", "done", "done"]);
       banner("ok", n ? `${n} personal values masked. 0 leaks. All placeholders restored.` : "No personal data found. The text was sent as is.",
         "Leak check passed on the exact text sent to " + r.model + ".");
     }
@@ -289,9 +301,9 @@ $("run").onclick = async () => {
 
 async function loadAudit() {
   const [s, rows] = await Promise.all([fetch("/audit/summary").then(r => r.json()), fetch("/audit?limit=50").then(r => r.json())]);
-  const label = { ok: "OK: sent and fully restored", flagged: "Flagged: AI dropped or invented", blocked: "Blocked: leak caught, nothing sent", error: "Error: AI call failed" };
+  const label = { ok: "OK: sent and fully restored", flagged: "Flagged: AI dropped or invented", rejected: "Rejected: invalid ID, user asked to re-enter", blocked: "Blocked: leak caught, nothing sent", error: "Error: AI call failed" };
   $("tiles").innerHTML = Object.entries(s.by_status).map(([k, v]) => `<div class="tile ${k}"><b>${v}</b><span>${label[k]}</span></div>`).join("");
-  const cls = { ok: "", flagged: "warn", blocked: "bad", error: "bad" };
+  const cls = { ok: "", flagged: "warn", rejected: "warn", blocked: "bad", error: "bad" };
   $("rows").innerHTML = rows.map(r => `<tr><td class="m">${r.ts_utc.replace("T", " ").slice(0, 19)}</td><td class="m">${r.request_id}</td><td><span class="pill ${cls[r.status]}">${r.status}</span></td><td>${esc(r.model)}</td><td class="m">${Object.entries(r.entity_counts).map(([k, v]) => k + "×" + v).join(" ") || "none"}</td><td class="m">${r.leaked_types.join(", ") || "none"}</td><td>${r.dropped}</td><td>${r.unknown}</td><td>${r.gateway_ms.toFixed(0)}</td><td>${r.llm_ms.toFixed(0)}</td><td class="m">${esc(r.error || "")}</td></tr>`).join("")
     || '<tr><td colspan="11" class="empty">No requests yet. Run the gateway first.</td></tr>';
   $("lastpayload").innerHTML = rows.length ? (rows[0].sanitized_payload ? chips(rows[0].sanitized_payload) : '<span class="empty">Empty: this request was blocked or had no payload.</span>') : "";

@@ -7,6 +7,7 @@ bookkeeping counts, error type (if any) and timings.
 status:
   ok       sent, every placeholder restored, nothing odd
   flagged  sent, but the LLM dropped or invented placeholders
+  rejected an ID was invalid (format / check digit); nothing sent, user asked to re-enter
   blocked  leak guard found a raw value; nothing was sent
   error    the LLM call failed (outage, timeout, bad key...)
 
@@ -67,6 +68,8 @@ def _connect(db_path: str | None) -> sqlite3.Connection:
 
 
 def status_of(result: ProcessResult) -> str:
+    if getattr(result, "needs_correction", False):
+        return "rejected"
     if result.blocked:
         return "blocked"
     if result.reinsertion.dropped or result.reinsertion.unknown:
@@ -95,14 +98,18 @@ def _now() -> str:
 
 def log_request(result: ProcessResult, db_path: str | None = None) -> None:
     counts, total = _counts(result.entities)
+    status = status_of(result)
+    note = ""
+    if status == "rejected":  # types only, never the invalid values
+        note = "invalid: " + ", ".join(sorted({i["type"] for i in result.invalid_ids}))
     _insert((
         result.request_id, _now(), result.backend, result.model, counts, total,
-        "" if result.blocked else result.outbound_payload,
+        "" if status in ("blocked", "rejected") else result.outbound_payload,
         int(result.blocked), json.dumps(result.leak_check.leaked_types),
         len(result.reinsertion.restored), len(result.reinsertion.dropped),
         len(result.reinsertion.unknown),
         round(result.gateway_ms, 2), round(result.llm_ms, 2),
-        status_of(result), "",
+        status, note,
     ), db_path)
 
 
@@ -156,7 +163,7 @@ def summary(db_path: str | None = None) -> dict:
         conn.close()
     return {
         "total_requests": total,
-        "by_status": {s: by_status.get(s, 0) for s in ("ok", "flagged", "blocked", "error")},
+        "by_status": {s: by_status.get(s, 0) for s in ("ok", "flagged", "rejected", "blocked", "error")},
         "leaks_blocked_by_type": dict(leaked),
         "placeholders_dropped_by_llm": flagged[0],
         "placeholders_invented_by_llm": flagged[1],

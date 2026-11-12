@@ -47,6 +47,8 @@ class ProcessRequest(BaseModel):
     task: str = Field(DEFAULT_TASK, max_length=2_000)
     # Failure drills for demos: inject a fault on purpose.
     simulate: Literal["none", "detector_miss", "llm_outage"] = "none"
+    # Check Aadhaar / PAN / GSTIN / passport / voter ID / phone; reject invalid ones.
+    validate_ids: bool = True
 
 
 def _detector_that_misses_a_repeat(text: str):
@@ -97,7 +99,8 @@ def process_endpoint(req: ProcessRequest) -> dict:
         backend = MockBackend(req.mock_mode)
     detector = _detector_that_misses_a_repeat if req.simulate == "detector_miss" else None
     try:
-        result = process(req.text, backend, task=req.task, audit=True, detector=detector)
+        result = process(req.text, backend, task=req.task, audit=True, detector=detector,
+                         validate_ids=req.validate_ids)
     except Exception as e:  # noqa: BLE001 - surface LLM failures as 502, not 500
         raise HTTPException(status_code=502, detail=f"LLM call failed: {type(e).__name__}") from e
     out = result.to_dict()
