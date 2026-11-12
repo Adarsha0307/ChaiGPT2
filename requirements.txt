@@ -1,0 +1,9 @@
+presidio-analyzer
+spacy
+gliner
+fastapi
+uvicorn
+google-genai
+pytest
+httpx
+# models (not pip): python -m spacy download en_core_web_lg
