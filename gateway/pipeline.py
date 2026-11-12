@@ -1,6 +1,8 @@
-"""process(): Detect -> Mask -> Leak guard -> Forward -> Reinsert.
+"""process(): Detect -> Mask -> Leak guard -> Forward -> Reinsert (task 16).
 
 This is the one function the UI, the API and the eval call.
+gateway_ms covers detect + mask + leak guard + reinsert; llm_ms is the
+backend call alone, so the gateway's own overhead is visible.
 """
 from __future__ import annotations
 
@@ -16,7 +18,13 @@ from .prompt import DEFAULT_TASK, build_prompt
 from .reinsert import reinsert
 
 
-def process(text: str, backend: LLMBackend | None = None, task: str = DEFAULT_TASK) -> ProcessResult:
+def process(
+    text: str,
+    backend: LLMBackend | None = None,
+    task: str = DEFAULT_TASK,
+    audit: bool = False,
+    audit_db: str | None = None,
+) -> ProcessResult:
     backend = backend or MockBackend()
     request_id = uuid.uuid4().hex[:12]
 
@@ -29,7 +37,7 @@ def process(text: str, backend: LLMBackend | None = None, task: str = DEFAULT_TA
 
     if not leak.passed:
         # Never forward a payload that still holds a raw value.
-        return ProcessResult(
+        result = ProcessResult(
             request_id=request_id,
             original_text=text,
             sanitized_text=masked.masked_text,
@@ -45,25 +53,29 @@ def process(text: str, backend: LLMBackend | None = None, task: str = DEFAULT_TA
             llm_ms=0.0,
             blocked=True,
         )
+    else:
+        resp = backend.generate(prompt)
+        t1 = time.perf_counter()
+        restored = reinsert(resp.text, masked.mapping)
+        post_ms = (time.perf_counter() - t1) * 1000
+        result = ProcessResult(
+            request_id=request_id,
+            original_text=text,
+            sanitized_text=masked.masked_text,
+            outbound_payload=resp.outbound_payload,
+            llm_output=resp.text,
+            final_text=restored.text,
+            entities=masked.entities,
+            reinsertion=restored,
+            leak_check=leak,
+            backend=backend.name,
+            model=resp.model,
+            gateway_ms=pre_ms + post_ms,
+            llm_ms=resp.latency_ms,
+        )
 
-    resp = backend.generate(prompt)
+    if audit:
+        from .audit import log_request
 
-    t1 = time.perf_counter()
-    result = reinsert(resp.text, masked.mapping)
-    post_ms = (time.perf_counter() - t1) * 1000
-
-    return ProcessResult(
-        request_id=request_id,
-        original_text=text,
-        sanitized_text=masked.masked_text,
-        outbound_payload=resp.outbound_payload,
-        llm_output=resp.text,
-        final_text=result.text,
-        entities=masked.entities,
-        reinsertion=result,
-        leak_check=leak,
-        backend=backend.name,
-        model=resp.model,
-        gateway_ms=pre_ms + post_ms,
-        llm_ms=resp.latency_ms,
-    )
+        log_request(result, audit_db)
+    return result

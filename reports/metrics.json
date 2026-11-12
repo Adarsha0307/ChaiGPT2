@@ -1,0 +1,137 @@
+{
+  "dataset": "datasets management\\data\\synthetic_documents.json",
+  "docs": 50,
+  "gold_entities": 328,
+  "leaks": 0,
+  "leaks_by_type": {},
+  "blocked": 0,
+  "detection": {
+    "PERSON": {
+      "gold": 95,
+      "tp": 95,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "exact_span": 95
+    },
+    "ADDRESS": {
+      "gold": 51,
+      "tp": 51,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "exact_span": 51
+    },
+    "AADHAAR": {
+      "gold": 52,
+      "tp": 52,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "exact_span": 52
+    },
+    "PAN": {
+      "gold": 57,
+      "tp": 57,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "exact_span": 57
+    },
+    "GSTIN": {
+      "gold": 22,
+      "tp": 22,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "exact_span": 22
+    },
+    "VOTER_ID": {
+      "gold": 29,
+      "tp": 29,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "exact_span": 29
+    },
+    "PASSPORT": {
+      "gold": 22,
+      "tp": 22,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "exact_span": 22
+    }
+  },
+  "detection_total": {
+    "gold": 328,
+    "tp": 328,
+    "fp": 0,
+    "fn": 0,
+    "exact_span": 328,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "unlabeled_detections": {},
+  "reinsertion": {
+    "echo": {
+      "placeholders_restored": 305,
+      "placeholders_expected": 305,
+      "placeholder_accuracy": 1.0,
+      "docs_correct": 50,
+      "docs": 50
+    },
+    "paraphrase": {
+      "placeholders_restored": 305,
+      "placeholders_expected": 305,
+      "placeholder_accuracy": 1.0,
+      "docs_correct": 50,
+      "docs": 50
+    },
+    "reorder": {
+      "placeholders_restored": 305,
+      "placeholders_expected": 305,
+      "placeholder_accuracy": 1.0,
+      "docs_correct": 50,
+      "docs": 50
+    },
+    "drop": {
+      "placeholders_restored": 261,
+      "placeholders_expected": 261,
+      "placeholder_accuracy": 1.0,
+      "docs_correct": 50,
+      "docs": 50
+    },
+    "fake": {
+      "placeholders_restored": 305,
+      "placeholders_expected": 305,
+      "placeholder_accuracy": 1.0,
+      "docs_correct": 50,
+      "docs": 50
+    }
+  },
+  "latency": {
+    "mean_ms": 448.80564999984927,
+    "p50_ms": 433.88799999956973,
+    "p95_ms": 628.655954999158,
+    "max_ms": 670.4614999998739,
+    "docs_per_s": 2.2260271655095942
+  },
+  "misses": [],
+  "false_positives": []
+}

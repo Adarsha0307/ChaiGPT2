@@ -1,11 +1,19 @@
-"""PERSON and ADDRESS detection (task 8).
+"""PERSON and ADDRESS detection (task 8, tuned in task 19).
 
 Primary: GLiNER (urchade/gliner_multi_pii-v1), offline, multilingual, so it
 copes with Hinglish. Long texts are split into overlapping word windows.
 
+Always on: an Indian postal-address rule (premises word such as Flat /
+Plot / House No. / Unit ... comma-separated parts ... 6-digit PIN). Tuning
+on the dataset showed GLiNER misses addresses in the "House No. 401, ...,
+Delhi - 110017" layout, so the rule and the model run together and the
+merge step joins their spans.
+
 Fallback (the plan's 6:50 checkpoint rule): if GLiNER cannot load, or
-PII_NER=spacy is set, use spaCy's PERSON entities plus an Indian address
-regex (house number / locality keyword ... PIN code).
+PII_NER=spacy is set, use spaCy's PERSON entities plus the address rules.
+
+Filters drop generic words the model sometimes tags ("Hi Team",
+"Technical Support", a lone "Address").
 """
 from __future__ import annotations
 
@@ -35,6 +43,42 @@ _ADDRESS_RE = re.compile(
     r"(?:[ ,-]+[1-9][0-9]{2}\s?[0-9]{3})?",
 )
 _PIN_RE = re.compile(r"\b[1-9][0-9]{2}\s?[0-9]{3}\b")
+
+# Premises word + number, 1-8 comma-separated parts, then a 6-digit PIN.
+_PREMISES = (r"House|H\.?\s?No|Flat|Plot|Unit|Door|Shop|Block|Bldg|Building|Apt|Apartment|"
+             r"Room|Office|Survey|Khasra|Ward|Quarters?|Qtr|Villa|Bungalow|Wing")
+POSTAL_ADDRESS_RE = re.compile(
+    r"\b(?:" + _PREMISES + r")\.?(?:\s*No\.?)?\s*#?[A-Za-z0-9][A-Za-z0-9/-]*"
+    r"(?:,\s*[^,\n]{2,60}?){1,8}?"
+    r"[\s,–-]*[1-9][0-9]{2}\s?[0-9]{3}\b",
+    re.IGNORECASE,
+)
+
+_NOT_A_PERSON = {
+    "hi", "hello", "dear", "team", "support", "technical", "customer", "care", "service",
+    "sir", "madam", "maam", "manager", "officer", "desk", "department", "dept", "bank",
+    "branch", "applicant", "nominee", "owner", "agent", "executive", "helpdesk", "admin",
+    "user", "client", "regards", "thanks", "ji",
+}
+_NOT_AN_ADDRESS = {"address", "addresses", "residence", "office", "home", "permanent",
+                   "current", "communication", "residential", "mailing", "delivery"}
+
+
+def _plausible(e: Entity) -> bool:
+    words = re.findall(r"[^\W\d_]+", e.text.casefold())
+    if not words:
+        return False
+    if e.type == "PERSON":
+        return not all(w in _NOT_A_PERSON for w in words)
+    if e.type == "ADDRESS":
+        return not all(w in _NOT_AN_ADDRESS for w in words) and len(e.text.strip()) >= 4
+    return True
+
+
+def _detect_postal(text: str) -> list[Entity]:
+    return [Entity(type="ADDRESS", start=m.start(), end=m.end(), text=m.group(),
+                   score=0.9, source="regex")
+            for m in POSTAL_ADDRESS_RE.finditer(text)]
 
 
 @lru_cache(maxsize=1)
@@ -100,6 +144,6 @@ def _detect_fallback(text: str) -> list[Entity]:
 
 
 def detect_names_addresses(text: str) -> list[Entity]:
-    if ner_backend() == "gliner":
-        return _detect_gliner(text)
-    return _detect_fallback(text)
+    found = _detect_gliner(text) if ner_backend() == "gliner" else _detect_fallback(text)
+    found += _detect_postal(text)
+    return [e for e in found if _plausible(e)]
