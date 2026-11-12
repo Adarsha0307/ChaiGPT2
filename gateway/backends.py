@@ -34,25 +34,52 @@ def _load_dotenv() -> None:
 
 _load_dotenv()
 
-DEFAULT_GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+DEFAULT_GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
+
+
+RETRYABLE_STATUS = {429, 500, 502, 503, 504}  # rate limit / overloaded / transient
 
 
 class GeminiBackend:
     name = "gemini"
 
-    def __init__(self, model: str = DEFAULT_GEMINI_MODEL, api_key: str | None = None):
+    def __init__(
+        self,
+        model: str = DEFAULT_GEMINI_MODEL,
+        api_key: str | None = None,
+        max_attempts: int = 4,
+        base_delay: float = 2.0,
+    ):
         from google import genai  # imported lazily so Mock-only runs need no SDK
 
         key = api_key or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
         if not key:
             raise RuntimeError("Set GEMINI_API_KEY to use the Gemini backend.")
         self.model = model
+        self.max_attempts = max_attempts
+        self.base_delay = base_delay
+        self._sleep = time.sleep  # swapped out in tests
         self._client = genai.Client(api_key=key)
+
+    def _call_with_retry(self, prompt: str):
+        """generate_content, retrying 429/5xx with exponential backoff (2s, 4s, 8s).
+
+        Other errors (bad key, unknown model, bad request) are raised at once.
+        The same sanitized prompt is resent; nothing new leaves the box.
+        """
+        for attempt in range(1, self.max_attempts + 1):
+            try:
+                return self._client.models.generate_content(model=self.model, contents=prompt)
+            except Exception as e:  # noqa: BLE001 - filtered by status code below
+                code = getattr(e, "code", None)
+                if code not in RETRYABLE_STATUS or attempt == self.max_attempts:
+                    raise
+                self._sleep(self.base_delay * 2 ** (attempt - 1))
 
     def generate(self, prompt: str) -> LLMResponse:
         t0 = time.perf_counter()
-        resp = self._client.models.generate_content(model=self.model, contents=prompt)
-        latency = (time.perf_counter() - t0) * 1000
+        resp = self._call_with_retry(prompt)
+        latency = (time.perf_counter() - t0) * 1000  # includes any retry waits
         return LLMResponse(
             text=resp.text or "",
             outbound_payload=prompt,
