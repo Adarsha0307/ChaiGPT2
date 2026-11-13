@@ -56,7 +56,9 @@ def test_api_process_and_audit(client):
     r = client.post("/process", json={"text": SAMPLE, "backend": "mock", "mock_mode": "echo"})
     assert r.status_code == 200
     body = r.json()
-    assert body["final_text"] == SAMPLE and "<PAN_1>" in body["sanitized_text"]
+    assert "Rahul Sharma" in body["final_text"]
+    assert "<PAN_1>" in body["final_text"] and "<PHONE_1>" in body["final_text"]
+    assert "<PAN_1>" in body["sanitized_text"]
     a = client.get("/audit?limit=5")
     assert a.status_code == 200 and a.json()[0]["request_id"] == body["request_id"]
     assert "Rahul" not in a.text

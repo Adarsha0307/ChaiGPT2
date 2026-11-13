@@ -20,6 +20,7 @@ from pydantic import BaseModel, Field
 from .audit import recent, summary
 from .backends import GeminiBackend, MockBackend
 from .pipeline import process
+from .policy import DEFAULT_PURPOSE, Purpose
 from .prompt import DEFAULT_TASK
 
 
@@ -33,7 +34,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="PS-02 Privacy Gateway",
-    description="Masks Indian PII before text reaches an LLM, then restores it in the answer.",
+    description="Masks Indian PII by validated purpose before text reaches an LLM and restores only permitted values.",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -42,6 +43,10 @@ app = FastAPI(
 class ProcessRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=50_000,
                       examples=["Mera naam Rahul Sharma hai, PAN ABCPK1234F."])
+    purpose: Purpose = Field(
+        DEFAULT_PURPOSE,
+        description="Selects a fixed masking and reinsertion policy; task text cannot change it.",
+    )
     backend: Literal["mock", "gemini"] = "mock"
     mock_mode: Literal["echo", "paraphrase", "reorder", "drop", "fake"] = "echo"
     task: str = Field(DEFAULT_TASK, max_length=2_000)
@@ -100,7 +105,7 @@ def process_endpoint(req: ProcessRequest) -> dict:
     detector = _detector_that_misses_a_repeat if req.simulate == "detector_miss" else None
     try:
         result = process(req.text, backend, task=req.task, audit=True, detector=detector,
-                         validate_ids=req.validate_ids)
+                         validate_ids=req.validate_ids, purpose=req.purpose)
     except Exception as e:  # noqa: BLE001 - surface LLM failures as 502, not 500
         raise HTTPException(status_code=502, detail=f"LLM call failed: {type(e).__name__}") from e
     out = result.to_dict()

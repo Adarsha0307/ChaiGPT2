@@ -6,7 +6,7 @@ Out:  reports/gemini_run.md
 For each document: masks it, sends ONLY the sanitized prompt to Gemini,
 restores the answer, and checks:
   - leak check passed and no labeled value is in what was sent
-  - every placeholder Gemini returned was restored (none left in the answer)
+  - only purpose-permitted placeholders were restored
   - which placeholders Gemini dropped or invented
 """
 from __future__ import annotations
@@ -21,6 +21,7 @@ sys.path.insert(0, ROOT)
 from gateway.backends import GeminiBackend  # noqa: E402
 from gateway.leak_guard import find_leaks  # noqa: E402
 from gateway.pipeline import process  # noqa: E402
+from gateway.policy import DEFAULT_PURPOSE, policy_for  # noqa: E402
 from gateway.reinsert import PLACEHOLDER_RE, _canonical  # noqa: E402
 from scripts.evaluate import load_dataset  # noqa: E402
 
@@ -56,10 +57,23 @@ def main(n=5):
         gold = {f"{g['type']}#{i}": g["text"] for i, g in enumerate(d["gold"])}
         leaked = find_leaks(r.outbound_payload, gold)
         mapping = list(dict.fromkeys(_canonical(m) for m in PLACEHOLDER_RE.finditer(r.sanitized_text)))
-        left = [m.group() for m in PLACEHOLDER_RE.finditer(r.final_text) if _canonical(m) in mapping]
-        ok = r.leak_check.passed and not leaked and not left and not r.blocked
+        permitted = {
+            p for p in mapping
+            if policy_for(DEFAULT_PURPOSE, p[1:-1].rsplit("_", 1)[0]).restore
+        }
+        left = {
+            _canonical(m) for m in PLACEHOLDER_RE.finditer(r.final_text)
+            if _canonical(m) in mapping
+        }
+        expected_left = set(mapping) - permitted - set(r.reinsertion.dropped)
+        ok = (
+            r.leak_check.passed and not leaked and not r.blocked
+            and permitted.issubset(r.reinsertion.restored)
+            and not permitted.intersection(left)
+            and expected_left.issubset(left)
+        )
         rows.append((d["id"], d["category"], "OK" if ok else "CHECK",
-                     f"{len(r.reinsertion.restored)}/{len(mapping)}",
+                     f"{len(r.reinsertion.restored)}/{len(permitted)}",
                      ", ".join(r.reinsertion.dropped) or "none",
                      ", ".join(r.reinsertion.unknown) or "none",
                      f"{r.gateway_ms:.0f}", f"{r.llm_ms / 1000:.1f}"))
@@ -67,7 +81,7 @@ def main(n=5):
 
     L = ["# Live Gemini run\n",
          f"Model: `{backend.model}`. {len(rows)} documents from M3's dataset. Only the sanitized "
-         "prompt was sent; leak check and restoration were checked for each.\n",
+         "prompt was sent; leak check and purpose-approved restoration were checked for each.\n",
          "| Doc | Category | Result | Restored | Dropped by LLM | Invented by LLM | Gateway ms | LLM s |",
          "|---|---|---|---:|---|---|---:|---:|"]
     L += ["| " + " | ".join(r) + " |" for r in rows]

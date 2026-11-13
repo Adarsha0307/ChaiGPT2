@@ -102,7 +102,7 @@ td.m{font-family:var(--f-m);font-size:.8rem}
 </head>
 <body>
 <header>
-  <div class="brand"><div class="logo">PG</div><div><h1>PS-02 Privacy Gateway</h1><div class="sub">Masks Indian personal data before it reaches the AI, then restores it in the answer</div></div></div>
+  <div class="brand"><div class="logo">PG</div><div><h1>PS-02 Privacy Gateway</h1><div class="sub">Masks Indian personal data by purpose; restores only explicitly permitted values</div></div></div>
   <div class="tabs" role="tablist"><button class="on" data-tab="run">Live demo</button><button data-tab="audit">Audit log</button></div>
   <span class="pill idle" id="health">Loading models…</span>
 </header>
@@ -116,6 +116,10 @@ td.m{font-family:var(--f-m);font-size:.8rem}
     </div>
     <div class="card opts">
       <h2>2 · Settings</h2>
+      <label>Purpose<select id="purpose">
+        <option value="support_summary">Support summary (restore person name only)</option>
+        <option value="eligibility_review">Eligibility review (no values restored)</option>
+        <option value="document_classification">Document classification (redact all detected values)</option></select></label>
       <label>AI backend<select id="backend"><option value="mock">Mock AI (offline, instant)</option><option value="gemini">Google Gemini (live)</option></select></label>
       <label>Mock AI behaviour<select id="mode">
         <option value="echo">Echo: returns text unchanged</option>
@@ -151,9 +155,9 @@ td.m{font-family:var(--f-m);font-size:.8rem}
   </div>
 
   <div class="two">
-    <div class="card"><h2>Entities found</h2><div class="tblwrap"><table><thead><tr><th>Type</th><th>Value</th><th>Placeholder</th><th>Confidence</th><th>Detector</th></tr></thead><tbody id="ents"><tr><td colspan="5" class="empty">None yet</td></tr></tbody></table></div></div>
+    <div class="card"><h2>Entities found</h2><div class="tblwrap"><table><thead><tr><th>Type</th><th>Value</th><th>Mask label</th><th>Confidence</th><th>Detector</th></tr></thead><tbody id="ents"><tr><td colspan="5" class="empty">None yet</td></tr></tbody></table></div></div>
     <div class="card" style="display:grid;gap:14px;align-content:start">
-      <div><h2>Reinsertion</h2>
+      <div><h2>Purpose-limited reinsertion</h2>
         <div class="counters">
           <div class="counter g"><b id="c-res">0</b><span>Restored</span><div id="l-res"></div></div>
           <div class="counter a"><b id="c-drop">0</b><span>Dropped by AI</span><div id="l-drop"></div></div>
@@ -233,6 +237,11 @@ function placeholderFor(r, e) {
   return seen[e.type + "|" + norm(e.text)];
 }
 
+function maskLabelFor(r, e) {
+  if ($("purpose").value === "document_classification") return `[REDACTED_${e.type}]`;
+  return placeholderFor(r, e);
+}
+
 function render(r) {
   $("detected").innerHTML = r.entities.length ? highlight(r.original_text, r.entities, r.invalid_ids || []) : esc(r.original_text) + '<br><span class="empty">No personal data found.</span>';
   const known = new Set(r.entities.map(e => placeholderFor(r, e)));
@@ -244,7 +253,7 @@ function render(r) {
   fin = fin.replace(PH, m => `<span class="chip unk">${m}</span>`);
   $("final").innerHTML = (r.blocked || r.needs_correction) ? '<span class="empty">No answer: the request never reached the AI.</span>' : fin;
 
-  $("ents").innerHTML = r.entities.length ? r.entities.map(e => `<tr><td><span class="hl" style="background:var(--${e.type})">${e.type}</span></td><td>${esc(e.text)}</td><td class="m">${esc(placeholderFor(r, e))}</td><td><div class="bar"><i style="width:${Math.round(e.score * 100)}%"></i></div></td><td class="m">${e.source}</td></tr>`).join("")
+  $("ents").innerHTML = r.entities.length ? r.entities.map(e => `<tr><td><span class="hl" style="background:var(--${e.type})">${e.type}</span></td><td>${esc(e.text)}</td><td class="m">${esc(maskLabelFor(r, e))}</td><td><div class="bar"><i style="width:${Math.round(e.score * 100)}%"></i></div></td><td class="m">${e.source}</td></tr>`).join("")
     : '<tr><td colspan="5" class="empty">No personal data detected</td></tr>';
 
   const ri = r.reinsertion;
@@ -263,7 +272,7 @@ $("run").onclick = async () => {
   let i = 0; const tick = setInterval(() => { i = Math.min(i + 1, 3); setSteps([...Array(i).fill("done"), "run"]); }, 350);
   try {
     const res = await fetch("/process", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, backend: $("backend").value, mock_mode: $("mode").value, simulate: $("simulate").value }) });
+      body: JSON.stringify({ text, purpose: $("purpose").value, backend: $("backend").value, mock_mode: $("mode").value, simulate: $("simulate").value }) });
     clearInterval(tick);
     const r = await res.json();
     if (!res.ok) {
@@ -291,8 +300,8 @@ $("run").onclick = async () => {
       banner("warn", "Answer delivered, with warnings.", parts.join(" "));
     } else {
       setSteps(["done", "done", "done", "done", "done", "done", "done"]);
-      banner("ok", n ? `${n} personal values masked. 0 leaks. All placeholders restored.` : "No personal data found. The text was sent as is.",
-        "Leak check passed on the exact text sent to " + r.model + ".");
+      banner("ok", n ? `${n} personal values masked. 0 leaks. Restored values are permitted for the selected purpose only.` : "No personal data found. The text was sent as is.",
+        "Leak check passed on the exact text sent to " + r.model + ". Some placeholders intentionally remain in the answer.");
     }
   } catch (e) {
     clearInterval(tick); setSteps(["fail"]); banner("bad", "Could not reach the gateway server.", String(e));
@@ -301,7 +310,7 @@ $("run").onclick = async () => {
 
 async function loadAudit() {
   const [s, rows] = await Promise.all([fetch("/audit/summary").then(r => r.json()), fetch("/audit?limit=50").then(r => r.json())]);
-  const label = { ok: "OK: sent and fully restored", flagged: "Flagged: AI dropped or invented", rejected: "Rejected: invalid ID, user asked to re-enter", blocked: "Blocked: leak caught, nothing sent", error: "Error: AI call failed" };
+  const label = { ok: "OK: sent, purpose policy applied", flagged: "Flagged: AI dropped or invented", rejected: "Rejected: invalid ID, user asked to re-enter", blocked: "Blocked: leak caught, nothing sent", error: "Error: AI call failed" };
   $("tiles").innerHTML = Object.entries(s.by_status).map(([k, v]) => `<div class="tile ${k}"><b>${v}</b><span>${label[k]}</span></div>`).join("");
   const cls = { ok: "", flagged: "warn", rejected: "warn", blocked: "bad", error: "bad" };
   $("rows").innerHTML = rows.map(r => `<tr><td class="m">${r.ts_utc.replace("T", " ").slice(0, 19)}</td><td class="m">${r.request_id}</td><td><span class="pill ${cls[r.status]}">${r.status}</span></td><td>${esc(r.model)}</td><td class="m">${Object.entries(r.entity_counts).map(([k, v]) => k + "×" + v).join(" ") || "none"}</td><td class="m">${r.leaked_types.join(", ") || "none"}</td><td>${r.dropped}</td><td>${r.unknown}</td><td>${r.gateway_ms.toFixed(0)}</td><td>${r.llm_ms.toFixed(0)}</td><td class="m">${esc(r.error || "")}</td></tr>`).join("")

@@ -6,18 +6,18 @@
 
 | Metric | Result |
 |---|---|
-| In-scope values protected | **19 / 22** (86%) |
-| In-scope values leaked | **3** |
+| In-scope values protected | **20 / 22** (91%) |
+| In-scope values leaked | **2** |
 | Out-of-scope values sent (bank a/c, IFSC, DOB) | 3 |
 | Over-masking (false positives) | 2 |
 | Requests blocked by leak guard | 0 |
-| Cases: PASS / LEAK / OVER-MASKED / BLOCKED | 13 / 4 / 1 / 0 |
+| Cases: PASS / LEAK / OVER-MASKED / BLOCKED | 14 / 3 / 1 / 0 |
 
 ## Protected by type
 
 | Type | Protected | Total |
 |---|---:|---:|
-| AADHAAR | 1 | 2 |
+| AADHAAR | 2 | 2 |
 | ADDRESS | 2 | 2 |
 | EMAIL | 1 | 1 |
 | GSTIN | 1 | 1 |
@@ -36,7 +36,7 @@
 | S03 | Name written with initials | PASS | none | none |
 | S04 | Name in Devanagari script | PASS | none | none |
 | S05 | Aadhaar with dashes, keyword 'UID' | PASS | none | none |
-| S06 | Aadhaar split into pairs of digits | LEAK | AADHAAR `49 91 18 66 52 46` | none |
+| S06 | Aadhaar split into pairs of digits | PASS | none | none |
 | S07 | Phone numbers in unusual formats | PASS | none | none |
 | S08 | Email written out in words | PASS | none | none |
 | S09 | Address with landmark and no PIN code | PASS | none | none |

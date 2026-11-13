@@ -24,6 +24,7 @@ from gateway.backends import MockBackend  # noqa: E402
 from gateway.contracts import ENTITY_TYPES  # noqa: E402
 from gateway.leak_guard import find_leaks  # noqa: E402
 from gateway.pipeline import process  # noqa: E402
+from gateway.policy import DEFAULT_PURPOSE, policy_for  # noqa: E402
 from gateway.reinsert import PLACEHOLDER_RE, _canonical  # noqa: E402
 
 CANDIDATES = [
@@ -120,13 +121,22 @@ def check_reinsertion(mode, result):
         ok_extra = mp.dropped == [last]
     if mode == "fake":
         ok_extra = mp.unknown == ["<PERSON_9>"]
-    leftovers = [_canonical(m) for m in PLACEHOLDER_RE.finditer(result.final_text)
-                 if _canonical(m) in mapping_keys]
-    restored_ok = sum(1 for p in expected if p in mp.restored)
-    doc_ok = restored_ok == len(expected) and not leftovers and ok_extra
-    if mode == "echo":
-        doc_ok = doc_ok and result.final_text == result.original_text
-    return restored_ok, len(expected), doc_ok
+    permitted = {
+        p for p in mapping_keys
+        if policy_for(DEFAULT_PURPOSE, p[1:-1].rsplit("_", 1)[0]).restore
+    }
+    expected_restore = permitted.intersection(expected)
+    remaining = {
+        _canonical(m) for m in PLACEHOLDER_RE.finditer(result.final_text)
+        if _canonical(m) in mapping_keys
+    }
+    doc_ok = (
+        expected_restore.issubset(mp.restored)
+        and not expected_restore.intersection(remaining)
+        and (set(expected) - permitted).issubset(remaining)
+        and ok_extra
+    )
+    return len(expected_restore.intersection(mp.restored)), len(expected_restore), doc_ok
 
 
 def pct(x):
@@ -204,7 +214,7 @@ def write_report(m):
     w(f"| Detection recall (all types) | {pct(t['recall'])} |")
     w(f"| Detection precision (all types) | {pct(t['precision'])} |")
     w(f"| Detection F1 | {pct(t['f1'])} |")
-    w(f"| Reinsertion, exact round-trip (echo) | {m['reinsertion']['echo']['docs_correct']} / {m['docs']} docs |")
+    w(f"| Purpose-policy reinsertion (echo) | {m['reinsertion']['echo']['docs_correct']} / {m['docs']} docs |")
     lat = m["latency"]
     w(f"| Gateway overhead per document (p50 / p95) | {lat['p50_ms']:.0f} ms / {lat['p95_ms']:.0f} ms |\n")
     if m["leaks_by_type"]:

@@ -11,8 +11,8 @@ Dataset: `datasets management\data\synthetic_documents.json`. 50 documents, 328 
 | Detection recall (all types) | 100.0% |
 | Detection precision (all types) | 100.0% |
 | Detection F1 | 100.0% |
-| Reinsertion, exact round-trip (echo) | 50 / 50 docs |
-| Gateway overhead per document (p50 / p95) | 424 ms / 626 ms |
+| Purpose-policy reinsertion (echo) | 50 / 50 docs |
+| Gateway overhead per document (p50 / p95) | 449 ms / 609 ms |
 
 ## Detection by entity type
 
@@ -33,14 +33,14 @@ A detection counts if it has the right type and overlaps the labeled span. *Exac
 
 | Mode | What the fake LLM does | Placeholders restored | Docs fully correct |
 |---|---|---:|---:|
-| echo | returns text unchanged (must round-trip exactly) | 305 / 305 (100.0%) | 50 / 50 |
-| paraphrase | rewrites placeholders as PERSON_1, [PAN_1], <Person 1>, {X_1} | 305 / 305 (100.0%) | 50 / 50 |
-| reorder | reverses sentence order | 305 / 305 (100.0%) | 50 / 50 |
-| drop | deletes one placeholder (must be reported as dropped) | 261 / 261 (100.0%) | 50 / 50 |
-| fake | invents <PERSON_9> (must be flagged, never filled) | 305 / 305 (100.0%) | 50 / 50 |
+| echo | returns text unchanged (must round-trip exactly) | 72 / 72 (100.0%) | 50 / 50 |
+| paraphrase | rewrites placeholders as PERSON_1, [PAN_1], <Person 1>, {X_1} | 72 / 72 (100.0%) | 50 / 50 |
+| reorder | reverses sentence order | 72 / 72 (100.0%) | 50 / 50 |
+| drop | deletes one placeholder (must be reported as dropped) | 56 / 56 (100.0%) | 50 / 50 |
+| fake | invents <PERSON_9> (must be flagged, never filled) | 72 / 72 (100.0%) | 50 / 50 |
 
 ## Latency
 
-Gateway time = detect + mask + leak guard + reinsert, excluding the LLM call. Mean 440 ms, median 424 ms, p95 626 ms, max 709 ms on a laptop CPU, after a one-time model load.
+Gateway time = detect + mask + leak guard + reinsert, excluding the LLM call. Mean 449 ms, median 449 ms, p95 609 ms, max 665 ms on a laptop CPU, after a one-time model load.
 
 All values in this report come from M3's synthetic dataset. None belong to real people.

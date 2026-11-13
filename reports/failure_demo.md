@@ -8,6 +8,7 @@ Each scenario below ran through the real gateway and wrote one row to `reports/d
 |---|---:|
 | ok | 3 |
 | flagged | 2 |
+| rejected | 0 |
 | blocked | 1 |
 | error | 2 |
 

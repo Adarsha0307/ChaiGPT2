@@ -16,7 +16,7 @@ CONTRACT_FIELDS = {
 def test_process_runs_end_to_end_on_stubs():
     r = process(DOC, MockBackend("echo"))
     assert isinstance(r, ProcessResult)
-    assert r.final_text == DOC  # stubs mask nothing, echo returns it
+    assert r.final_text == "Mera naam Rahul Sharma hai. PAN <PAN_1>, Aadhaar <AADHAAR_1>."
     assert r.leak_check.passed and not r.blocked
     assert r.backend == "mock" and r.model == "mock-echo"
     assert r.gateway_ms >= 0 and r.llm_ms >= 0
