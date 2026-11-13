@@ -3,8 +3,8 @@
 Everyone (M1/M2 backend, M3 UI + dataset) codes against these shapes.
 Change them only by agreement, because the UI and the eval script read them.
 
-Pipeline:  detect(text) -> mask(text, entities) -> backend.generate(prompt)
-           -> reinsert(llm_text, mapping) -> ProcessResult
+Pipeline:  detect(text) -> mask(text, entities, purpose) -> backend.generate(prompt)
+           -> reinsert(llm_text, mapping, permitted_restorations) -> ProcessResult
 """
 from __future__ import annotations
 
@@ -40,14 +40,17 @@ class Entity:
 
 @dataclass
 class MaskResult:
-    """Output of mask(). `mapping` maps placeholder -> original value.
+    """Output of mask(). `mapping` maps emitted placeholders to originals.
 
     The mapping lives only for the duration of one request. It is never
     logged, never stored in the audit DB and never sent to the LLM.
+    `leak_values` holds every detected original solely for the outbound check.
     """
 
     masked_text: str
     mapping: dict[str, str]
+    leak_values: dict[str, str]
+    restore: set[str]
     entities: list[Entity]
 
 

@@ -90,47 +90,47 @@
   "unlabeled_detections": {},
   "reinsertion": {
     "echo": {
-      "placeholders_restored": 305,
-      "placeholders_expected": 305,
+      "placeholders_restored": 72,
+      "placeholders_expected": 72,
       "placeholder_accuracy": 1.0,
       "docs_correct": 50,
       "docs": 50
     },
     "paraphrase": {
-      "placeholders_restored": 305,
-      "placeholders_expected": 305,
+      "placeholders_restored": 72,
+      "placeholders_expected": 72,
       "placeholder_accuracy": 1.0,
       "docs_correct": 50,
       "docs": 50
     },
     "reorder": {
-      "placeholders_restored": 305,
-      "placeholders_expected": 305,
+      "placeholders_restored": 72,
+      "placeholders_expected": 72,
       "placeholder_accuracy": 1.0,
       "docs_correct": 50,
       "docs": 50
     },
     "drop": {
-      "placeholders_restored": 261,
-      "placeholders_expected": 261,
+      "placeholders_restored": 56,
+      "placeholders_expected": 56,
       "placeholder_accuracy": 1.0,
       "docs_correct": 50,
       "docs": 50
     },
     "fake": {
-      "placeholders_restored": 305,
-      "placeholders_expected": 305,
+      "placeholders_restored": 72,
+      "placeholders_expected": 72,
       "placeholder_accuracy": 1.0,
       "docs_correct": 50,
       "docs": 50
     }
   },
   "latency": {
-    "mean_ms": 440.366021999871,
-    "p50_ms": 423.6041499989369,
-    "p95_ms": 626.1027350006771,
-    "max_ms": 708.6692999946536,
-    "docs_per_s": 2.2685559757384497
+    "mean_ms": 449.33783399988897,
+    "p50_ms": 449.058749996766,
+    "p95_ms": 609.101849999206,
+    "max_ms": 664.8288000069442,
+    "docs_per_s": 2.223546724770515
   },
   "misses": [],
   "false_positives": []

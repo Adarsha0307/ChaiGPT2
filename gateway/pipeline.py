@@ -14,6 +14,7 @@ from .contracts import LLMBackend, ProcessResult, ReinsertResult
 from .detect import detect
 from .leak_guard import check_outbound
 from .mask import mask
+from .policy import DEFAULT_PURPOSE, Purpose, validate_purpose
 from .prompt import DEFAULT_TASK, build_prompt
 from .reinsert import reinsert
 from .validate import check_ids
@@ -27,12 +28,15 @@ def process(
     audit_db: str | None = None,
     detector=None,
     validate_ids: bool = True,
+    purpose: str = DEFAULT_PURPOSE,
 ) -> ProcessResult:
     """`detector` replaces detect() for tests and failure drills only.
 
     validate_ids: check every Indian ID (format + check digit). If any is
     invalid, nothing is sent and the result asks the user to re-enter it.
+    purpose selects a fixed masking policy, independent of the free-form task.
     """
+    purpose: Purpose = validate_purpose(purpose)
     backend = backend or MockBackend()
     request_id = uuid.uuid4().hex[:12]
 
@@ -41,9 +45,9 @@ def process(
     invalid: list[dict] = []
     if validate_ids:
         entities, invalid = check_ids(text, entities)
-    masked = mask(text, entities)
+    masked = mask(text, entities, purpose)
     prompt = build_prompt(masked.masked_text, task)
-    leak = check_outbound(prompt, masked.mapping)
+    leak = check_outbound(prompt, masked.leak_values)
     pre_ms = (time.perf_counter() - t0) * 1000
 
     if invalid:
@@ -94,7 +98,7 @@ def process(
                           masked.entities, prompt, e, pre_ms, audit_db)
             raise
         t1 = time.perf_counter()
-        restored = reinsert(resp.text, masked.mapping)
+        restored = reinsert(resp.text, masked.mapping, restore=masked.restore)
         post_ms = (time.perf_counter() - t1) * 1000
         result = ProcessResult(
             request_id=request_id,

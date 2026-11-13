@@ -4,6 +4,8 @@ Tolerant to how LLMs mangle placeholders:
     <PERSON_1>   PERSON_1   [PERSON_1]   {PERSON_1}   <Person 1>   <VOTER ID 2>
 Rules:
 - Only the per-request mapping is used; nothing else is ever substituted.
+- The pipeline can restrict restoration to purpose-approved mapping keys.
+- Known but disallowed placeholders are left in the answer unchanged.
 - Placeholder-looking tokens not in the mapping (e.g. an invented
   <PERSON_9>) are left as they are and reported in `unknown`.
 - Placeholders we sent that are missing from the answer go in `dropped`.
@@ -32,20 +34,33 @@ def _canonical(m: re.Match) -> str:
     return f"<{t}_{int(n)}>"
 
 
-def reinsert(llm_text: str, mapping: dict[str, str]) -> ReinsertResult:
+def reinsert(
+    llm_text: str,
+    mapping: dict[str, str],
+    restore: set[str] | None = None,
+) -> ReinsertResult:
+    """Replace only allowed placeholders; leave other known placeholders intact.
+
+    Omitting `restore` preserves the legacy helper behavior for direct callers.
+    """
     restored: list[str] = []
     unknown: list[str] = []
+    seen: set[str] = set()
+    restorable = set(mapping) if restore is None else restore
 
     def sub(m: re.Match) -> str:
         ph = _canonical(m)
         if ph in mapping:
-            if ph not in restored:
-                restored.append(ph)
-            return mapping[ph]
+            seen.add(ph)
+            if ph in restorable:
+                if ph not in restored:
+                    restored.append(ph)
+                return mapping[ph]
+            return m.group(0)
         if m.group(0) not in unknown:
             unknown.append(m.group(0))
         return m.group(0)
 
     text = PLACEHOLDER_RE.sub(sub, llm_text)
-    dropped = [ph for ph in mapping if ph not in restored]
+    dropped = [ph for ph in mapping if ph not in seen]
     return ReinsertResult(text=text, restored=restored, dropped=dropped, unknown=unknown)

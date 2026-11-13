@@ -169,7 +169,12 @@ RAW = ["Rahul Sharma", "BNZPM2501F", "4991 1866 5246", "98765 43210"]
 
 def test_echo_round_trip_is_exact():
     r = process(SAMPLE, MockBackend("echo"))
-    assert r.final_text == SAMPLE and not r.blocked and r.leak_check.passed
+    assert r.final_text == (
+        "Mera naam Rahul Sharma hai. PAN <PAN_1>, Aadhaar <AADHAAR_1>. "
+        "Rahul Sharma ka mobile <PHONE_1> hai."
+    )
+    assert not r.blocked and r.leak_check.passed
+    assert r.reinsertion.restored == ["<PERSON_1>"]
     assert r.reinsertion.dropped == [] and r.reinsertion.unknown == []
 
 
@@ -182,8 +187,11 @@ def test_nothing_raw_leaves_the_laptop():
 @pytest.mark.parametrize("mode", ["paraphrase", "reorder"])
 def test_all_values_come_back(mode):
     r = process(SAMPLE, MockBackend(mode))
-    for v in RAW:
-        assert v in r.final_text
+    assert "Rahul Sharma" in r.final_text
+    for v in RAW[1:]:
+        assert v not in r.final_text
+    assert "PAN" in r.final_text and "aadhaar" in r.final_text.casefold()
+    assert r.reinsertion.restored == ["<PERSON_1>"]
     assert r.reinsertion.dropped == []
 
 

@@ -5,7 +5,7 @@ the exact sanitized payload that was sent, leak-check result, placeholder
 bookkeeping counts, error type (if any) and timings.
 
 status:
-  ok       sent, every placeholder restored, nothing odd
+  ok       sent, policy-approved placeholders handled, nothing odd
   flagged  sent, but the LLM dropped or invented placeholders
   rejected an ID was invalid (format / check digit); nothing sent, user asked to re-enter
   blocked  leak guard found a raw value; nothing was sent
